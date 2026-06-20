@@ -193,7 +193,7 @@
                                 </div>
 
                                 <div class="tab-pane" :class="currentTab === 'changeBillingDetails' ? 'active' : ''" id="changeBillingDetails" wire:ignore.self>
-                                    @livewire('admin.profile.billing-details', ['user_id' => auth()->user()->id ])
+                                    
                                 </div>
                                 <!-- /.tab-pane -->
                             </div>
