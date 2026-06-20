@@ -54,12 +54,12 @@
                             @if(auth()->user()->role == 'aliado' || auth()->user()->role == 'aliadoSmartData')
                                 <li>
                                     <a class="dropdown-item" href="/dashboard-aliadoSmartData">
-                                        <i class="bi bi-speedometer2 me-2"></i> Escritorio 2
+                                        <i class="bi bi-speedometer2 me-2"></i> Escritorio
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="/profile">
-                                        <i class="bi bi-speedometer2 me-2"></i> Perfil
+                                        <i class="bi bi-speedometer2 me-2"></i> Perfil.
                                     </a>
                                 </li>
                             @endif
