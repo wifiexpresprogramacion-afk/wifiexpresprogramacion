@@ -25,6 +25,7 @@ class UpdateProfile extends Component
 
     public function updatedImage()
     {
+        
         $previousPath = auth()->user()->avatar;
 
         $path = $this->image->store('/', 'avatars');
