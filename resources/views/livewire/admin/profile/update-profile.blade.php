@@ -189,7 +189,7 @@
                                 </div>
 
                                 <div class="tab-pane" :class="currentTab === 'changeBasicData' ? 'active' : ''" id="changeBasicData" wire:ignore.self>
-                                    @livewire('admin.profile.basic-data', ['user_id' => auth()->user()->id ])
+                                    
                                 </div>
 
                                 <div class="tab-pane" :class="currentTab === 'changeBillingDetails' ? 'active' : ''" id="changeBillingDetails" wire:ignore.self>
