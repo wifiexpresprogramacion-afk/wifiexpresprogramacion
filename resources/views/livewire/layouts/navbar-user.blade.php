@@ -58,9 +58,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="/profile">
-                                        <i class="bi bi-speedometer2 me-2"></i> Perfil.
-                                    </a>
+                                    <a class="dropdown-item" href="{{ route('admin.profile.edit') }}" x-ref="profileLink">Perfil</a>
                                 </li>
                             @endif
 
