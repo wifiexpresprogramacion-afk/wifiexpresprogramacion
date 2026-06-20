@@ -57,6 +57,11 @@
                                         <i class="bi bi-speedometer2 me-2"></i> Escritorio 2
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item" href="/profile">
+                                        <i class="bi bi-speedometer2 me-2"></i> Perfil
+                                    </a>
+                                </li>
                             @endif
 
                             <li><hr class="dropdown-divider"></li>
