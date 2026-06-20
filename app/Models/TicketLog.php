@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\Carbon;
+
+class TicketLog extends Model
+{
+    protected $fillable = [
+        'router_id', 
+        'username',  // ejem: T-7A:D2:3B:4C:5E
+        'mac_address', // IP del usuario según aclaratoria
+        'user_ip', 
+        'disconnected_at', 
+        'duration_seconds'
+    ];
+
+    public function router(): BelongsTo
+    {
+        return $this->belongsTo(Router::class);
+    }
+
+    /**
+     * Relación con el usuario de MikroTik.
+     * NOTA: No se puede usar 'username' directamente debido al prefijo 'T-'.
+     * En este sistema, UserMikrotik.name es la MAC, y TicketLog.username es 'T-' + MAC.
+     */
+    public function userMikrotik()
+    {
+        // Esta relación no funcionará para eager loading estándar. 
+        // Se recomienda buscar por MAC limpia manualmente.
+        return $this->belongsTo(UserMikrotik::class, 'router_id', 'router_id');
+    }
+
+    /**
+     * Obtiene la ubicación física basada en el segmento de IP 
+     * que reside en el campo 'mac_address'.
+     */
+    public function getUbicacionFisicaAttribute(): string
+    {
+        // Usamos mac_address que es donde guardas la IP
+        $ip = $this->mac_address;
+
+        if (!$ip || !filter_var($ip, FILTER_VALIDATE_IP)) {
+            return $ip ?? 'Sin IP';
+        }
+
+        // Extraemos los primeros 3 octetos (ej: 10.0.0.)
+        $parts = explode('.', $ip);
+        if (count($parts) < 3) return $ip;
+        
+        $segmento = $parts[0] . '.' . $parts[1] . '.' . $parts[2] . '.';
+
+        $mapeo = AntennaMapping::where('router_id', $this->router_id)
+            ->where('ip_address', 'LIKE', $segmento . '%')
+            ->first();
+
+        return $mapeo ? $mapeo->location_name : $ip;
+    }
+
+    public function getDuracionFormateadaAttribute(): string
+    {
+        if (!$this->duration_seconds) return 'En línea';
+        $horas = floor($this->duration_seconds / 3600);
+        $minutos = floor(($this->duration_seconds / 60) % 60);
+        $segundos = $this->duration_seconds % 60;
+        return $horas > 0 ? "{$horas}h {$minutos}m" : "{$minutos}m {$segundos}s";
+    }
+
+    public function getAliadoNombreAttribute(): string
+    {
+        return $this->router->user->name ?? 'Sistema';
+    }
+
+    /**
+     * Obtiene el nombre completo del cliente (soporta datos inyectados por JOIN o relación)
+     */
+    public function getClienteNombreAttribute(): string
+    {
+        return $this->client_name ?? ($this->userMikrotik->full_name ?? 'N/A');
+    }
+
+    /**
+     * Obtiene el género del cliente (soporta datos inyectados por JOIN o relación)
+     */
+    public function getClienteGeneroAttribute(): string
+    {
+        return $this->gender ?? ($this->userMikrotik->gender ?? '-');
+    }
+
+    /**
+     * Calcula la edad del cliente basándose en la fecha de nacimiento.
+     */
+    public function getClienteEdadAttribute()
+    {
+        $birthday = $this->birthday ?? ($this->userMikrotik->birthday ?? null);
+        return $birthday ? Carbon::parse($birthday)->age : '-';
+    }
+}

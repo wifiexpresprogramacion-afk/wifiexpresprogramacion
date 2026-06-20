@@ -1,0 +1,202 @@
+<div class="container-fluid py-4" wire:poll.30s="refreshStatus">
+    {{-- OVERLAY DE CARGA --}}
+    @if($showOverlay)
+    <div class="d-print-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="text-center text-white">
+            <div class="spinner-grow text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+            <h4 class="fw-bold">ACTUALIZANDO HISTORIAL</h4>
+            <p>Sincronizando registros con el MikroTik...</p>
+        </div>
+    </div>
+    @endif
+
+    {{-- FILTROS --}}
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            {{-- MENSAJES DE RESPUESTA --}}
+            @if (session()->has('message'))
+                <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> {{ session('message') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if (session()->has('error'))
+                <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                <h4 class="fw-800 mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Historial de Tickets</h4>
+                
+                <div class="d-flex gap-2">
+                    {{-- BOTÓN IMPRIMIR ACTUALIZADO --}}
+                    <a href="{{ route('tickets.report', [
+                        'search' => $search,
+                        'aliado' => $filterAliado,
+                        'router' => $filterRouter,
+                        'plan'   => $filterPlan,
+                        'estado' => $filterEstado,
+                        'origen' => $filterOrigen,
+                        'activado' => $filterActivado ? 'true' : 'false',
+                        'sort'   => $sortDirection
+                    ]) }}" target="_blank" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="bi bi-printer me-1"></i> IMPRIMIR CONSULTA
+                    </a>
+                    
+                    <button wire:click="syncData" 
+                            class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm"
+                            {{ !$filterRouter ? 'disabled' : '' }}
+                            wire:loading.attr="disabled"
+                            title="{{ !$filterRouter ? 'Seleccione un router primero' : 'Sincronizar datos' }}">
+                        <span wire:loading wire:target="syncData" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        <i wire:loading.remove wire:target="syncData" class="bi bi-arrow-repeat me-1"></i> SINCRONIZAR SMART
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" wire:model="search" class="form-control border-start-0" placeholder="PIN o Identidad...">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <select wire:model="filterOrigen" class="form-select">
+                        <option value="">Todos los Orígenes</option>
+                        <option value="tickets">🎫 Lotes (Tickets)</option>
+                        <option value="pasarela">💳 Pasarela (Venta)</option>
+                        <option value="trial">🎁 Trial (Gratis)</option>
+                    </select>
+                </div>
+
+                @if(auth()->user()->role === 'admin')
+                <div class="col-md-2">
+                    <select wire:model="filterAliado" class="form-select">
+                        <option value="">Todos los Aliados</option>
+                        @foreach($aliados as $a) <option value="{{ $a->id }}">{{ $a->name }}</option> @endforeach
+                    </select>
+                </div>
+                @endif
+
+                <div class="col-md-2">
+                    <select wire:model="filterRouter" class="form-select">
+                        <option value="">Todos los Routers</option>
+                        @foreach($routers as $r) 
+                            @php $isOnline = $routerStatus[$r->id] ?? false; @endphp
+                            <option value="{{ $r->id }}" {{ !$isOnline ? 'disabled' : '' }}>
+                                {{ $isOnline ? '🟢' : '🔴' }} {{ $r->identity }} {{ !$isOnline ? '(Offline)' : '' }}
+                            </option> 
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select wire:model="filterEstado" class="form-select">
+                        <option value="">Cualquier Estado</option>
+                        <option value="disponible">DISPONIBLE</option>
+                        <option value="en_uso">EN USO</option>
+                        <option value="agotado">AGOTADO</option>
+                        <option value="anulado">ANULADO</option>
+                    </select>
+                </div>
+
+                {{-- NUEVO CHECKBOX EN TU DISEÑO --}}
+                <div class="col-md-1 d-flex align-items-center">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="checkActivado" wire:model="filterActivado">
+                        <label class="form-check-label fw-bold text-primary" for="checkActivado">Activados</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- TABLA --}}
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-muted small fw-bold">
+                    <tr>
+                        <th class="px-4 py-3">IDENTIDAD / TIPO</th>
+                        <th class="py-3">ROUTER / ALIADO</th>
+                        <th class="py-3 text-center">PLAN / COSTO</th>
+                        <th class="py-3 text-center cursor-pointer" wire:click="toggleSort">
+                            CONSUMO 
+                            @if($sortDirection === 'asc') <i class="bi bi-sort-numeric-down"></i> @else <i class="bi bi-sort-numeric-up-alt"></i> @endif
+                        </th>
+                        <th class="py-3 text-center">ESTADO</th>
+                        <th class="text-end px-4">FECHA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tickets as $t)
+                    @php 
+                        $isTrial = str_contains($t->identity, 'IMP-T-');
+                        $isLote = str_contains($t->identity, 'Lote') || str_contains($t->identity, '2026-04');
+                        $isVenta = str_contains($t->identity, 'IMP-') && !$isTrial;
+
+                        $planLower = strtolower($t->plan);
+                        $costo = (str_contains($planLower, 'neutro') || str_contains($planLower, 'cortesia') || str_contains($planLower, 'trial')) ? 0 : 1;
+                    @endphp
+                    <tr>
+                        <td class="px-4">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm me-2 bg-light rounded d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                    @if($isTrial) <i class="bi bi-gift-fill text-success"></i>
+                                    @elseif($isLote) <i class="bi bi-layers-fill text-primary"></i> 
+                                    @elseif($isVenta) <i class="bi bi-credit-card-fill text-warning"></i>
+                                    @else <i class="bi bi-person-fill text-secondary"></i> @endif
+                                </div>
+                                <div>
+                                    <span class="fw-bold text-dark d-block">
+                                        {{ $t->username }}
+                                        @if($t->activado) <i class="bi bi-patch-check-fill text-primary small ms-1" title="Activado"></i> @endif
+                                    </span>
+                                    <small class="text-muted" style="font-size: 0.7rem;">{{ $t->identity }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">{{ $t->router->identity }}</span>
+                            <div class="small text-muted">{{ $t->router->user->name }}</div>
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-bold d-block">{{ $t->plan }}</span>
+                            <span class="badge {{ $costo > 0 ? 'bg-soft-primary text-primary' : 'bg-soft-success text-success' }} small">
+                                Costo: {{ $costo }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <code class="text-primary fw-bold" style="font-size: 1.1rem;">{{ $t->tiempo_consumido ?: '0s' }}</code>
+                        </td>
+                        <td class="text-center">
+                            @php $color = ['disponible'=>'success','en_uso'=>'info','agotado'=>'secondary','anulado'=>'danger'][$t->estado] ?? 'dark'; @endphp
+                            <span class="badge bg-{{ $color }} rounded-pill px-3 shadow-sm">{{ strtoupper($t->estado) }}</span>
+                        </td>
+                        <td class="text-end px-4 text-nowrap">
+                            <span class="text-muted small d-block">{{ $t->created_at->format('d/m/Y') }}</span>
+                            <span class="text-muted small">{{ $t->created_at->format('H:i') }}</span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron registros.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white border-0 p-3">
+            {{ $tickets->links() }}
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-primary { background-color: rgba(13, 110, 253, 0.1); }
+    .bg-soft-success { background-color: rgba(25, 135, 84, 0.1); }
+    .cursor-pointer { cursor: pointer; }
+    .fw-800 { font-weight: 800; }
+</style>

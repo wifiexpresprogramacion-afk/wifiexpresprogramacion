@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIFI EXPRES - Acceso</title>
+    <style>
+        :root {
+            --purple-main: #6200ea;
+            --orange-accent: #ff6d00;
+            --bg-light: #f4f7f6;
+            --gray-text: #888;
+            --green-success: #2e7d32;
+            --red-error: #d32f2f;
+        }
+
+        body { 
+            font-family: "Segoe UI", Roboto, sans-serif; 
+            margin: 0; padding: 0; 
+            background-color: var(--bg-light);
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 3000; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--purple-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #error-display {
+            display: none;
+            background-color: #ffebee;
+            color: var(--red-error);
+            padding: 15px;
+            margin: 10px 25px;
+            border-radius: 12px;
+            border: 1px solid #ffcdd2;
+            font-size: 14px;
+            text-align: center;
+            font-weight: bold;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            z-index: 100;
+        }
+
+        #ads-modal { 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.9); z-index:2000; 
+            display:none; justify-content:center; align-items:center; 
+        }
+        .ads-content { 
+            width:90%; max-width:400px; background:white; 
+            border-radius:20px; overflow:hidden; position:relative; 
+        }
+        
+        .carousel-container { width: 100%; height: 250px; overflow: hidden; position: relative; }
+        .carousel-slide { display: none; width: 100%; height: 100%; object-fit: cover; animation: fadeEffect 0.8s; }
+        .carousel-slide.active { display: block; }
+        @keyframes fadeEffect { from {opacity: 0.4} to {opacity: 1} }
+
+        #close-ads { 
+            position:absolute; top:10px; right:10px; background: var(--orange-accent); 
+            color: white; width: 35px; height: 35px; border-radius: 50%; 
+            display: none; justify-content: center; align-items: center; 
+            cursor: pointer; font-weight: bold; border: 2px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 2001;
+        }
+
+        .header {
+            background-color: var(--purple-main); color: white; padding: 12px 20px; text-align: center;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 30; position: relative;
+        }
+        .logo-text { font-size: 24px; font-weight: 800; font-style: italic; margin: 0; }
+        .logo-text span { color: var(--orange-accent); }
+        .welcome-msg { font-size: 11px; letter-spacing: 1px; margin-top: 2px; text-transform: uppercase; }
+
+        .hero-banner { 
+            width: 100%; 
+            height: 220px; 
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin-top: -10px; 
+            transition: all 0.3s ease; 
+        }
+
+        .content {
+            padding: 25px; flex-grow: 1; margin-top: -30px;
+            background: white; border-top-left-radius: 30px; border-top-right-radius: 30px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); box-sizing: border-box;
+            position: relative; z-index: 10;
+        }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        .manual-input { width: 100%; padding: 18px 15px; border: 3px solid #e0e0e0; border-radius: 15px; box-sizing: border-box; font-size: 20px; font-weight: 800; outline: none; background-color: #fafafa; }
+        
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .option-card { display: flex; align-items: center; padding: 18px; border: 2px solid #e0e0e0; border-radius: 18px; margin-bottom: 15px; cursor: pointer; transition: 0.2s; }
+        .option-card:active { transform: scale(0.98); background-color: #f0f0f0; }
+
+        .trial-button { display: none; background-color: #e8f5e9; border: 2px dashed var(--green-success); color: var(--green-success); padding: 15px; border-radius: 18px; text-align: center; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
+        .title-text { font-weight: bold; color: var(--purple-main); font-size: 18px; }
+
+        .footer-actions { padding: 15px 25px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .btn-main { background-color: var(--purple-main); color: white; width: 100%; padding: 16px; border: none; border-radius: 50px; font-size: 16px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+        .btn-main:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        .btn-link { 
+            background: #eee; border: none; color: #555; 
+            margin-top: 10px; padding: 10px 25px; border-radius: 20px;
+            font-weight: bold; text-transform: uppercase; 
+            cursor: pointer; font-size: 13px; display: inline-block;
+            text-decoration: none; 
+        }
+
+        .bottom-bar { background-color: var(--purple-main); color: white; text-align: center; padding: 18px; font-weight: bold; border-top-left-radius: 20px; border-top-right-radius: 20px; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="spinner"></div>
+        <div id="loader-text" style="font-weight: bold; color: var(--purple-main);">Procesando, por favor espere...</div>
+    </div>
+
+    <div id="ads-modal">
+        <div class="ads-content">
+            <div id="close-ads" onclick='document.getElementById("ads-modal").style.display="none"'>✕</div>
+            <div class="carousel-container" id="carousel-ads"></div>
+            <div id="timer-text" style="padding:15px; text-align:center; font-size: 14px; color: #444;">
+                Espera <span id="seconds" style="font-weight: bold; color: var(--orange-accent);">5</span> segundos...
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="logo-text" id="header-logo-text">WIFI<span>EXPRES</span>™</div>
+        <div class="welcome-msg">¡Hola, Bienvenido!</div>
+    </div>
+
+    <div class="hero-banner" id="main-banner"></div>
+    <div id="error-display"></div>
+
+    <div class="content">
+        <div id="screen-plans" class="screen active">
+            <h2>Selecciona tu Plan</h2>
+            <div id="btn-trial-option" class="trial-button" onclick="selectFreeTrial()">🎁 Navega Gratis </div>
+            <div id="list-plans">Cargando planes...</div>
+        </div>
+
+        <div id="screen-user-form" class="screen">
+            <h2 id="form-title">Datos de Registro</h2>
+            <div class="input-group">
+                <label style="display:block;color:var(--purple-main);font-weight:800;font-size:14px;margin-bottom:8px;text-transform:uppercase;">Teléfono (Móvil)</label>
+                <input type="tel" id="reg-phone" class="manual-input" placeholder="04121234567" oninput="validateV2Fields()">
+            </div>
+            <div class="input-group">
+                <label style="display:block;color:var(--purple-main);font-weight:800;font-size:14px;margin-bottom:8px;text-transform:uppercase;">Correo Electrónico</label>
+                <input type="email" id="reg-email" class="manual-input" placeholder="usuario@gmail.com" oninput="validateV2Fields()">
+            </div>
+        </div>
+
+        <div id="screen-payment-methods" class="screen">
+            <h2>¿Cómo deseas pagar?</h2>
+            <div class="option-card" onclick='processSelectedPayment("banco")'>
+                <div class="info-box">
+                    <div class="title-text">BioPago / BDV</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-manual-login" class="screen">
+            <h2>Tu Ticket de Acceso</h2>
+            <div class="input-group">
+                <label style="display:block;color:var(--purple-main);font-weight:800;font-size:14px;margin-bottom:8px;text-transform:uppercase;">Usuario / Ticket</label>
+                <input type="text" id="manual-user" class="manual-input" oninput="validateManualFields()">
+            </div>
+            <div class="input-group">
+                <label style="display:block;color:var(--purple-main);font-weight:800;font-size:14px;margin-bottom:8px;text-transform:uppercase;">Contraseña</label>
+                <input type="password" id="manual-pass" class="manual-input" oninput="validateManualFields()">
+            </div>
+        </div>
+
+        <div id="screen-iframe" class="screen">
+            <h2 id="iframe-title">Finalizar Pago</h2>
+            <div style="width: 100%; height: 550px; border-radius: 15px; overflow: hidden; background: #f9f9f9;">
+                <iframe id="pasarela-frame" style="width:100%; height:100%; border:none;" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <button id="btn-next" class="btn-main" style="display:none;" disabled onclick="handleNext()">Continuar</button>
+        <button id="btn-manual-toggle" class="btn-link" style="display:none;" onclick="showScreen('screen-manual-login')">Ya tengo un ticket</button>
+        <button id="btn-back" class="btn-link" style="display:none;" onclick="goBack()">Volver</button>
+    </div>
+
+    <div class="bottom-bar">INTERNET <span style="color:var(--orange-accent)">A TU LADO</span></div>
+
+    <form name="sendin" action="/login" method="post" style="display:none">
+        <input type="hidden" name="username" />
+        <input type="hidden" name="password" />
+    </form>
+
+    <script>
+        const IDENTITY = "$(identity)";
+        const MAC_CLIENTE = "$(mac)";
+        const API_V1 = "https://wifiexpres.com/api/v1";
+        const API_V2 = "https://wifiexpres.com/api/v2";
+        const LINK_TRIAL = "$(link-login-only)?dst=$(link-orig-esc)&username=T-$(mac-esc)";
+
+        let isTrialFlow = false;
+        let planSelected = null, planAmount = null, isStore = false, hasTrialEnabled = false;
+
+        function toggleLoader(show, text = "Procesando...") { 
+            document.getElementById("loader-text").innerText = text;
+            document.getElementById("loader-overlay").style.display = show ? "flex" : "none"; 
+        }
+
+        function showError(msg) { 
+            const err = document.getElementById("error-display"); 
+            err.innerText = msg; err.style.display = "block"; 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(()=> err.style.display="none", 6000); 
+        }
+
+        window.addEventListener("message", (event) => {
+            if (event.data && event.data.status === "pago_exitoso") { 
+                loginSystem(document.getElementById('reg-phone').value, tempPassGlobal); 
+            }
+        });
+
+        async function initPortal() {
+            try {
+                const res = await fetch(`${API_V1}/get-plans?identity=${encodeURIComponent(IDENTITY)}&mac=${encodeURIComponent(MAC_CLIENTE)}`);
+                const data = await res.json();
+                
+                if(data.success && data.router) {
+                    const r = data.router;
+                    isStore = (r.is_store == 1);
+                    hasTrialEnabled = (r.is_trial == 1);
+
+                    if (r.comercio_nombre) {
+                        let nombreOriginal = r.comercio_nombre.toUpperCase();
+                        let nombreFormateado = nombreOriginal.replace("EXPRES", "<span>EXPRES</span>");
+                        document.getElementById("header-logo-text").innerHTML = nombreFormateado;
+                    }
+
+                    const banner = document.getElementById("main-banner");
+                    banner.style.backgroundImage = r.comercio_banner ? `url("${r.comercio_banner}")` : `url("banner/titulo_caracas.jpg")`;
+                    
+                    if(r.is_promotion == 1 && r.path_imgs && r.path_imgs.length > 0) {
+                        renderCarousel(r.path_imgs);
+                    }
+
+                    if(isStore) document.getElementById("btn-manual-toggle").style.display = "inline-block";
+                }
+                loadPlans();
+            } catch (e) { loadPlans(); }
+        }
+
+        async function loadPlans() {
+            const list = document.getElementById("list-plans");
+            try {
+                const res = await fetch(`${API_V1}/get-plans?identity=${encodeURIComponent(IDENTITY)}&mac=${encodeURIComponent(MAC_CLIENTE)}`);
+                const data = await res.json();
+                list.innerHTML = ""; 
+                if(hasTrialEnabled) document.getElementById("btn-trial-option").style.display = "block";
+                
+                data.plans.forEach(p => {
+                    const prof = p.mikrotik_profile.toLowerCase();
+                    if (prof.includes("cortesia") || prof.includes("gratis") || prof.includes("trial") || prof.includes("neutro")) return;
+                    
+                    const d = document.createElement("div");
+                    d.className = "option-card";
+                    d.innerHTML = `<div class="title-text">${p.name.split("-")[0]} - Bs. ${p.price}</div>`;
+                    d.onclick = () => { isTrialFlow = false; planSelected = p.mikrotik_profile; planAmount = p.price; showScreen("screen-user-form"); };
+                    list.appendChild(d);
+                });
+            } catch (e) { list.innerHTML = "Error al cargar planes."; }
+        }
+
+        function selectFreeTrial() {
+            isTrialFlow = true;
+            planAmount = 0;
+            showScreen("screen-user-form");
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+            document.getElementById(id).classList.add("active");
+            document.getElementById("btn-back").style.display = (id === "screen-plans") ? "none" : "inline-block";
+            document.getElementById("btn-next").style.display = (id === "screen-user-form" || id === "screen-manual-login") ? "block" : "none";
+            
+            if(id === "screen-user-form") {
+                document.getElementById("btn-next").innerText = isTrialFlow ? "CONECTAR AHORA" : "CONTINUAR";
+                validateV2Fields();
+            }
+        }
+
+        function handleNext() {
+            const active = document.querySelector(".screen.active").id;
+            if (active === "screen-user-form") {
+                if (isTrialFlow) submitFreeTrial();
+                else showScreen("screen-payment-methods");
+            } else if (active === "screen-manual-login") {
+                loginSystem(document.getElementById("manual-user").value, document.getElementById("manual-pass").value);
+            }
+        }
+
+        let tempPassGlobal = "";
+        async function processSelectedPayment(method) {
+            if(method === "banco") {
+                const phone = document.getElementById('reg-phone').value;
+                const email = document.getElementById('reg-email').value;
+                tempPassGlobal = Math.floor(10000 + Math.random() * 90000).toString();
+
+                toggleLoader(true, "Iniciando pago...");
+                try {
+                    const res = await fetch(`${API_V2}/users/pre-add`, {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ 
+                            username: phone, password: tempPassGlobal, email: email,
+                            router_mac: MAC_CLIENTE, identity: IDENTITY, planSelected: planSelected
+                        })
+                    });
+                    const result = await res.json();
+                    toggleLoader(false);
+                    if(result.success) {
+                        showScreen("screen-iframe");
+                        const urlIframe = `pasarela.html?plan=${encodeURIComponent(planSelected)}&amount=${planAmount}&identity=${encodeURIComponent(IDENTITY)}&user=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}`;
+                        document.getElementById("pasarela-frame").src = urlIframe;
+                    } else {
+                        showError(result.message || "Error al procesar registro.");
+                    }
+                } catch (e) { toggleLoader(false); showError("Error de conexión."); }
+            }
+        }
+
+        async function submitFreeTrial() {
+            const phone = document.getElementById('reg-phone').value;
+            const email = document.getElementById('reg-email').value;
+            
+            toggleLoader(true, "Iniciando sesión...");
+            
+            const payload = {
+                identity: IDENTITY, mac_cliente: MAC_CLIENTE,
+                full_name: "Usuario Cortesia", gender: "O", birthday: "2000-01-01",
+                email: email, cellphonecode: phone.substring(0,4), cellphone: phone.substring(4)
+            };
+
+            try {
+                const res = await fetch(`${API_V2}/free-connection`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.success) { 
+                    window.location.href = LINK_TRIAL; 
+                } else { 
+                    toggleLoader(false); showError(result.message); 
+                }
+            } catch (e) { toggleLoader(false); showError("Error de red"); }
+        }
+
+        function loginSystem(u, p) {
+            document.forms.sendin.username.value = u;
+            document.forms.sendin.password.value = p;
+            document.forms.sendin.submit();
+        }
+
+        function validateManualFields() { 
+            document.getElementById("btn-next").disabled = document.getElementById("manual-user").value.length < 3; 
+        }
+
+        function validateV2Fields() { 
+            const phone = document.getElementById("reg-phone").value;
+            const email = document.getElementById("reg-email").value;
+            document.getElementById("btn-next").disabled = (phone.length < 10 || email.length < 5); 
+        }
+
+        function renderCarousel(imgs) {
+            const container = document.getElementById("carousel-ads");
+            if(!imgs || imgs.length === 0) return;
+            container.innerHTML = "";
+            imgs.forEach((src, i) => {
+                const img = document.createElement("img"); img.src = src;
+                img.className = i === 0 ? "carousel-slide active" : "carousel-slide";
+                container.appendChild(img);
+            });
+            document.getElementById("ads-modal").style.display = "flex";
+            let t = 5;
+            const timer = setInterval(() => {
+                t--; document.getElementById("seconds").innerText = t;
+                if(t <= 0) { clearInterval(timer); document.getElementById("close-ads").style.display = "flex"; }
+            }, 1000);
+        }
+
+        function goBack() { showScreen("screen-plans"); }
+
+        window.onload = initPortal;
+    </script>
+</body>
+</html>

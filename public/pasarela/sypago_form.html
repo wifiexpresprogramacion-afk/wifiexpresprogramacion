@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasarela SyPago - C2P</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 15px; background: white; margin: 0; }
+        .label { display: block; color: #6200ea; font-weight: 800; font-size: 16px; margin-bottom: 8px; text-transform: uppercase; }
+        
+        input, select { 
+            width: 100%; padding: 15px; border: 3px solid #e0e0e0; border-radius: 15px; 
+            margin-bottom: 15px; box-sizing: border-box; font-size: 20px; 
+            font-weight: 900; color: #000; background-color: #fafafa; outline: none; 
+            transition: 0.3s;
+        }
+        input:focus { border-color: #6200ea; background-color: #fff; }
+        
+        input:disabled, select:disabled {
+            background-color: #eee !important;
+            color: #888 !important;
+            cursor: not-allowed;
+        }
+
+        .row { display: flex; gap: 8px; }
+
+        .btn-pay { 
+            background: #ff6d00; color: white; border: none; width: 100%; padding: 18px; 
+            border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; 
+            font-size: 18px; box-shadow: 0 4px 10px rgba(255,109,0,0.3);
+            transition: 0.3s;
+        }
+        .btn-pay:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
+        
+        .btn-back {
+            background: #f4f4f4; color: #6200ea; border: 2px solid #6200ea; width: 100%; padding: 15px;
+            border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            font-size: 14px; margin-top: 10px; display: block; text-align: center; text-decoration: none;
+        }
+
+        h3 { color: #333; font-size: 18px; margin: 0 0 15px 0; text-align: center; font-weight: 800; text-transform: uppercase; }
+        .header-logo { text-align: center; margin-bottom: 15px; }
+        
+        .error-msg { 
+            color: #d32f2f; background: #ffebee; padding: 12px; border-radius: 12px; 
+            font-size: 14px; text-align: center; display: none; margin-bottom: 15px; 
+            border: 1px solid #ffcdd2; font-weight: bold;
+        }
+
+        #step-otp { display: none; background: #fff9e6; padding: 20px; border-radius: 15px; border: 2px dashed #ffb300; margin-top: 15px; }
+        
+        .status-container { margin-top: 15px; text-align: center; }
+        .loader { display: none; font-weight: 800; color: #6200ea; font-size: 16px; }
+        
+        #timer-display { display: none; background: #e8f5e9; border: 2px solid #2e7d32; border-radius: 15px; padding: 15px; color: #1b5e20; }
+        #timer-display span { font-size: 22px; font-weight: 900; display: block; }
+        
+        input[readonly] { background: #f5f5f5; color: #555; border-color: #eee; }
+    </style>
+</head>
+<body>
+    <div class="header-logo"><img src="https://wifiexpres.com/img/logoSypagoSP.svg" alt="SyPago" style="height: 35px;"></div>
+    <h3>PAGO MÓVIL C2P</h3>
+    
+    <div id="error-div" class="error-msg"></div>
+
+    <div id="step-data">
+        <label class="label">Monto a Pagar (Bs.)</label>
+        <input type="text" id="display-amount" readonly>
+
+        <label class="label">Banco del Pagador</label>
+        <select id="bank_code">
+            <option value="">Seleccione banco...</option>
+            <option value="0102">Banco de Venezuela</option>
+            <option value="0105">Mercantil</option>
+            <option value="0108">Provincial</option>
+            <option value="0134">Banesco</option>
+            <option value="0172">Bancamiga</option>
+            <option value="0191">BNC</option>
+        </select>
+
+        <label class="label">Cédula de Identidad</label>
+        <div class="row">
+            <select id="identificationNac" style="flex: 1;">
+                <option value="V" selected>V</option>
+                <option value="E">E</option>
+                <option value="J">J</option>
+            </select>
+            <input type="number" id="id_number" placeholder="Solo números" style="flex: 3;" required>
+        </div>
+
+        <label class="label">Teléfono (Registrado en Banco)</label>
+        <input type="tel" id="phone_number" placeholder="Ej: 04121234567" required>
+
+        <label class="label">Correo Electrónico</label>
+        <input type="email" id="email" placeholder="tu@correo.com" required>
+
+        <button class="btn-pay" id="btn-request-sms" onclick="ejecutarFlujoPago()">Solicitar Código SMS</button>
+    </div>
+
+    <div id="step-otp">
+        <label class="label" style="color: #ff6d00;">Código de Seguridad (OTP)</label>
+        <input type="number" id="otp_code" placeholder="Ej: 123456">
+        <button class="btn-pay" id="btn-confirm-pay" onclick="confirmPayment()" style="background: #2e7d32;">Validar y Finalizar</button>
+        <button class="btn-back" onclick="goBack()">Volver / Cambiar Datos</button>
+    </div>
+
+    <div class="status-container">
+        <div id="msg-loading" class="loader">PROCESANDO...</div>
+        <div id="timer-display">
+            <small id="status-text">Verificando pago...</small>
+            <span id="seconds-left">ESPERE...</span>
+        </div>
+    </div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const planName = urlParams.get('plan') || 'plan_generico';
+    const planCost = urlParams.get('amount') || '0';
+    const routerIdentity = urlParams.get('identity') || 'MikroTik';
+    const routerMac = urlParams.get('mac') || '';
+    const passTemp1 = urlParams.get('tempPass'); 
+    const userParam = urlParams.get('user') || urlParams.get('phone') || "";
+
+    const API_PRE_ADD = "https://wifiexpres.com/api/v2/users/pre-addSypago";
+    const API_REQUEST_SMS = "https://wifiexpres.com/api/sypagoRequestSms";
+    const API_CONFIRM = "https://wifiexpres.com/api/sypago-confirm";
+
+    // Inicialización
+    document.getElementById('display-amount').value = planCost;
+    if(userParam) document.getElementById('phone_number').value = userParam;
+
+    function setInputsDisabled(status) {
+        const ids = ['bank_code', 'identificationNac', 'id_number', 'phone_number', 'email'];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.disabled = status;
+        });
+    }
+
+    async function ejecutarFlujoPago() {
+        const btn = document.getElementById('btn-request-sms');
+        const bank = document.getElementById('bank_code').value;
+        const id_num = document.getElementById('id_number').value.trim();
+        const phone_val = document.getElementById('phone_number').value.trim();
+        const correo = document.getElementById('email').value.trim();
+        const nac = document.getElementById('identificationNac').value;
+
+        if(!bank || !id_num || !phone_val || !correo) { 
+            showError("Por favor, complete todos los campos."); 
+            return; 
+        }
+
+        btn.disabled = true;
+        btn.innerText = "SOLICITANDO...";
+        setInputsDisabled(true);
+        toggleUI(true);
+        document.getElementById('error-div').style.display = "none";
+
+        try {
+            // PASO 1: Registro previo en Laravel
+            await fetch(API_PRE_ADD, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    username: phone_val, 
+                    password: passTemp1, 
+                    email: correo,
+                    planSelected: planName, 
+                    router_mac: routerMac,
+                    identity: routerIdentity,
+                    cedula: nac + id_num
+                })
+            });
+            
+            // PASO 2: Solicitar SMS a la pasarela
+            const smsRes = await fetch(API_REQUEST_SMS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    bank_code: bank,
+                    id_number: id_num,
+                    phone_number: phone_val,
+                    amount: planCost,
+                    username: phone_val,
+                    plan: planName
+                })
+            });
+
+            const smsResult = await smsRes.json();
+
+            if (smsResult.success) {
+                document.getElementById('step-data').style.display = "none";
+                document.getElementById('step-otp').style.display = "block";
+                window.scrollTo(0,0);
+            } else {
+                throw new Error(smsResult.message || "Error al solicitar SMS");
+            }
+        } catch (e) { 
+            showError(e.message);
+            btn.disabled = false;
+            btn.innerText = "SOLICITAR CÓDIGO SMS";
+            setInputsDisabled(false); 
+        }
+        toggleUI(false);
+    }
+
+    async function confirmPayment() {
+        const btnConfirm = document.getElementById('btn-confirm-pay');
+        const otp = document.getElementById('otp_code').value;
+        const phone_val = document.getElementById('phone_number').value.trim();
+        const id_num = document.getElementById('id_number').value.trim();
+        const bank = document.getElementById('bank_code').value;
+
+        if(!otp) return showError("Ingrese el código OTP");
+
+        btnConfirm.disabled = true;
+        btnConfirm.innerText = "VALIDANDO...";
+        toggleUI(true);
+
+        try {
+            const response = await fetch(API_CONFIRM, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    otp, 
+                    amount: planCost, 
+                    id_number: id_num, 
+                    phone_number: phone_val,
+                    bank_code: bank,
+                    username: phone_val
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.transaction_id) {
+                document.getElementById('step-otp').style.display = "none";
+                startPolling(result.transaction_id, phone_val);
+            } else {
+                resetToInitial(result.message || "OTP Inválido");
+            }
+        } catch (e) { 
+            resetToInitial("Error de red en confirmación"); 
+        }
+    }
+
+    function startPolling(txId, userToActivate) {
+        toggleUI(false);
+        document.getElementById('timer-display').style.display = "block"; 
+        const poll = setInterval(async () => {
+            try {
+                const res = await fetch(`https://wifiexpres.com/api/sypago-status/${txId}`);
+                const result = await res.json();
+                
+                if (result.status === 'ACCP') {
+                    clearInterval(poll);
+                    document.getElementById('status-text').innerText = "¡PAGO CONFIRMADO!";
+                    document.getElementById('seconds-left').innerText = "ACTIVANDO INTERNET...";
+                    
+                    window.parent.postMessage({ 
+                        status: "pago_exitoso", 
+                        user: userToActivate 
+                    }, "*");
+
+                } else if (result.status !== 'PROC' && result.status !== 'PEND') {
+                    clearInterval(poll);
+                    resetToInitial("Pago fallido: " + (result.message || result.status));
+                }
+            } catch (e) { console.error("Error polling", e); }
+        }, 4000);
+    }
+
+    function toggleUI(l) { document.getElementById('msg-loading').style.display = l ? "block" : "none"; }
+    
+    function showError(m) { 
+        const d = document.getElementById('error-div'); 
+        d.innerText = m; 
+        d.style.display = 'block'; 
+    }
+
+    function resetToInitial(m) { 
+        toggleUI(false); 
+        document.getElementById('timer-display').style.display = "none";
+        document.getElementById('step-data').style.display = "block";
+        document.getElementById('step-otp').style.display = "none";
+        
+        const requestBtn = document.getElementById('btn-request-sms');
+        requestBtn.disabled = false;
+        requestBtn.innerText = "SOLICITAR CÓDIGO SMS";
+
+        const confirmBtn = document.getElementById('btn-confirm-pay');
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "VALIDAR Y FINALIZAR";
+        
+        setInputsDisabled(false); 
+        showError(m); 
+    }
+
+    function goBack() {
+        document.getElementById('step-otp').style.display = "none";
+        document.getElementById('step-data').style.display = "block";
+        setInputsDisabled(false);
+        const requestBtn = document.getElementById('btn-request-sms');
+        requestBtn.disabled = false;
+        requestBtn.innerText = "SOLICITAR CÓDIGO SMS";
+    }
+</script>
+</body>
+</html>
