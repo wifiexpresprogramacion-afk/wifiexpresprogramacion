@@ -58,7 +58,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('admin.profile.edit') }}" x-ref="profileLink">Perfil</a>
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}" x-ref="profileLink">Perfil</a>
                                 </li>
                             @endif
 
