@@ -53,6 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isRoot() { return $this->role === self::ROLE_ROOT; }
     public function isAliado() { return $this->role === self::ROLE_ALIADO; }
     public function isAliadoSmartData() { return $this->role === self::ROLE_ALIADOSMARTDATA; }
+    public function isCliente() { return $this->role === self::ROLE_CLIENTE; }
     public function isUser() { return $this->role === self::ROLE_USER; }
     // --- RELACIONES HOTSPOT ---
     public function routers() { return $this->hasMany(Router::class, 'user_id'); }
