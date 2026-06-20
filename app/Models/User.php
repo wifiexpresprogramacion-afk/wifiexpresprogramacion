@@ -55,6 +55,30 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAliadoSmartData() { return $this->role === self::ROLE_ALIADOSMARTDATA; }
     public function isCliente() { return $this->role === self::ROLE_CLIENTE; }
     public function isUser() { return $this->role === self::ROLE_USER; }
+
+    // --- Propiedades Personalizadas ---
+    public function rol() { 
+            switch ($this->role) {
+                case self::ROLE_ROOT:
+                    return 'Root';
+                case self::ROLE_ADMIN:
+                    return 'Admin';
+                case self::ROLE_LIDERNEGOCIO:
+                    return 'Líder de Negocio';
+                case self::ROLE_VENDEDOR:
+                    return 'Vendedor';
+                case self::ROLE_CLIENTE:
+                    return 'Cliente';
+                case self::ROLE_ALIADO:
+                    return 'Aliado';
+                case self::ROLE_ALIADOSMARTDATA:
+                    return 'Aliado SmartData';
+                case self::ROLE_USER:
+                    return 'User';
+                default:
+                    return 'Rol no definido';
+            }
+        }
     // --- RELACIONES HOTSPOT ---
     public function routers() { return $this->hasMany(Router::class, 'user_id'); }
     
