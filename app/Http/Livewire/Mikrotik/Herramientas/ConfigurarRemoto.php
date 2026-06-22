@@ -262,7 +262,7 @@ class ConfigurarRemoto extends Component
             'routers' => Router::query()
                 ->when($this->selectedAliado, fn($q) => $q->where('user_id', $this->selectedAliado))
                 ->get(),
-            'aliados' => User::where('role', 'aliado')->get(),
+            'aliados' => User::where('role', 'aliado')->orwhere('role', 'aliadoSmartData')->get(),
             'versiones' => HotspotVersion::all()
         ]);
     }
