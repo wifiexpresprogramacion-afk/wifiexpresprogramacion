@@ -251,7 +251,7 @@ class ConfDetallada extends Component
     public function render()
     {
         return view('livewire.mikrotik.herramientas.conf-detallada', [
-            'aliados' => User::where('role', 'aliado')->get(),
+            'aliados' => User::where('role', 'aliado')->orwhere('role', 'aliadoSmartData')->get(),
             'routers' => Router::where('user_id', $this->selectedAliado)->get(),
             'hotspot_versions' => HotspotVersion::all()
         ]);
