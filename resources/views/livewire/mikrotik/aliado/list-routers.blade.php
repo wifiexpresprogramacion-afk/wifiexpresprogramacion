@@ -112,21 +112,25 @@
                                     <i class="bi bi-gear me-1"></i> CONFIG
                                 </button>
                             </div>
-                            <div class="col-6">
-                                <a href="{{ $statusReal === true ? route('admin.router.planes', $r->id) : '#' }}" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold {{ $disabled }}">
-                                    <i class="bi bi-tags me-1"></i> PLANES
-                                </a>
-                            </div>
+                            @if($r->hotspotVersion && $r->hotspotVersion->name === 'SmartData')
+                                <div class="col-6">
+                                    <a href="{{ $statusReal === true ? route('aliado.router.planes', $r->id) : '#' }}" class="btn btn-outline-primary btn-sm w-100 rounded-pill fw-bold {{ $disabled }}">
+                                        <i class="bi bi-tags me-1"></i> PLANES
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-6">
                                 <a href="{{ route('mikrotik.hotspot.config', $r->id) }}" class="btn btn-outline-info btn-sm w-100 rounded-pill fw-bold">
                                     <i class="bi bi-broadcast me-1"></i> HOTSPOT
                                 </a>
                             </div>
-                            <div class="col-6">
-                                <a href="{{ $statusReal === true ? route('admin.router.tickets', $r->id) : '#' }}" class="btn btn-primary btn-sm w-100 rounded-pill fw-bold {{ $disabled }}">
-                                    <i class="bi bi-ticket-perforated me-1"></i> TICKETS
-                                </a>
-                            </div>
+                            @if($r->hotspotVersion && $r->hotspotVersion->name === 'SmartData')
+                                <div class="col-6">
+                                    <a href="{{ $statusReal === true ? route('aliado.tickets', $r->id) : '#' }}" class="btn btn-primary btn-sm w-100 rounded-pill fw-bold {{ $disabled }}">
+                                        <i class="bi bi-ticket-perforated me-1"></i> TICKETS
+                                    </a>
+                                </div>
+                            @endif
                             <div class="col-6">
                                 <a href="{{ route('aliado.antenas.config', $r->id) }}" class="btn btn-outline-warning btn-sm w-100 rounded-pill fw-bold">
                                     <i class="bi bi-broadcast me-1"></i> ANTENAS

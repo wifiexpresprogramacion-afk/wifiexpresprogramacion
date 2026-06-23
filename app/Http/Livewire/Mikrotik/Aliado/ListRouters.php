@@ -168,7 +168,7 @@ class ListRouters extends Component
             'admin' => 'required',
             'password' => 'required',
             'comercio_nombre' => 'required',
-            'hotspot_version_id' => 'required'
+            'hotspot_version_id' => 'required',
         ]);
 
         try {
