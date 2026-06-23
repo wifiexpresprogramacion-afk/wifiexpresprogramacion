@@ -182,7 +182,7 @@
                                     @endif
                                 @elseif($selected_id && $current_media_path)                                    
                                     @if($media_type == 'imagen')
-                                        <img src="{{ asset('storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                                        <img src="{{ asset('s' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @endif
                                     
                                 @else
