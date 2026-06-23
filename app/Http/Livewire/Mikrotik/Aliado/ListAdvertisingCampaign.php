@@ -102,8 +102,6 @@ class ListAdvertisingCampaign extends Component
         $this->user_id = $campaign->user_id;
         $this->current_media_path = $campaign->media_path;
 
-        dd($this->current_media_path); // Depuración para verificar las opciones cargadas
-        
         $this->isModalOpen = true;
     }
 
