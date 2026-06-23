@@ -278,9 +278,11 @@
                                     @endif
                                 @elseif($selected_id && $current_media_path)
                                     @if($media_type == 'imagen')
-                                        <img src="{{ asset('storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                                        {{-- Usamos el accesor del modelo para obtener la URL --}}
+                                        <img src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @elseif($media_type == 'video')
-                                        <video src="{{ asset('storage/' . $current_media_path) }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
+                                        {{-- Usamos el accesor del modelo también para el video --}}
+                                        <video src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
                                     @endif
                                 @else
                                     <span class="text-muted small">Sin archivo seleccionado</span>
