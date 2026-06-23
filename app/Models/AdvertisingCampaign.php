@@ -62,8 +62,8 @@ class AdvertisingCampaign extends Model
      */
     public function getMediaUrlAttribute()
     {
-        if ($this->media_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->media_path)) {
-            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->media_path);
+        if ($this->media_path && \Illuminate\Support\Facades\Storage::disk('campaign')->exists($this->media_path)) {
+            return \Illuminate\Support\Facades\Storage::disk('campaign')->url($this->media_path);
         }
         // Devuelve una imagen por defecto si no hay media_path o el archivo no existe.
         return asset('noimage.png');
