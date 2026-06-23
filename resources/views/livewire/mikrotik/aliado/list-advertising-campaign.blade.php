@@ -182,7 +182,7 @@
                                     @endif
                                 @elseif($selected_id && $current_media_path)
                                     @if($media_type == 'imagen')
-                                        <img src="{{ asset('storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
+                                        <img src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
                                     @endif
                                 @else
                                     <span class="text-muted small">Sin archivo seleccionado</span>
