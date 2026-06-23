@@ -192,7 +192,7 @@
                                 
                                 {{-- INPUT GROUP CON EL BOTÓN DE ELIMINAR --}}
                                 <div class="input-group">
-                                    <select wire:model="package_id" id="package_select" class="form-select border-0 shadow-sm">
+                                    <select wire:model="package_id" id="package_select" class="form-select border-0 shadow-sm @error('package_id') is-invalid @enderror">
                                         <option value="">-- Seleccionar Plan --</option>
                                         @foreach($packages as $p)
                                             <option value="{{ $p->id }}">{{ $p->name }} (Límite: {{ $p->limit_routers }} routers)</option>
@@ -214,7 +214,7 @@
                                 @if($packages->isEmpty())
                                     <small class="text-danger d-block mt-1">Este aliado no posee planes activos.</small>
                                 @endif
-                                @error('package_id') <small class="text-danger">Debe asignar un plan.</small> @enderror
+                                @error('package_id') <div class="invalid-feedback d-block mt-1">{{ $message }}</div> @enderror
                             </div>
                         </div>
 
@@ -240,37 +240,44 @@
 
                         <div class="col-md-6 mt-4">
                             <label class="form-label small fw-bold text-muted">IDENTIDAD MK</label>
-                            <input type="text" wire:model.defer="identity" class="form-control">
+                            <input type="text" wire:model.defer="identity" class="form-control @error('identity') is-invalid @enderror">
+                            @error('identity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-muted">IP / HOST</label>
-                            <input type="text" wire:model.defer="ip" class="form-control">
+                            <input type="text" wire:model.defer="ip" class="form-control @error('ip') is-invalid @enderror">
+                            @error('ip') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-muted">MAC ADDRESS</label>
-                            <input type="text" wire:model.defer="macAddress" class="form-control">
+                            <input type="text" wire:model.defer="macAddress" class="form-control @error('macAddress') is-invalid @enderror">
+                            @error('macAddress') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-muted">API PORT</label>
-                            <input type="number" wire:model.defer="api_port" class="form-control">
+                            <input type="number" wire:model.defer="api_port" class="form-control @error('api_port') is-invalid @enderror">
+                            @error('api_port') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-muted text-primary">UBICACIÓN</label>
-                            <input type="text" wire:model.defer="location" class="form-control border-primary border-opacity-25">
+                            <input type="text" wire:model.defer="location" class="form-control border-primary border-opacity-25 @error('location') is-invalid @enderror">
+                            @error('location') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted">ADMIN API/FTP</label>
-                            <input type="text" wire:model.defer="admin" class="form-control">
+                            <input type="text" wire:model.defer="admin" class="form-control @error('admin') is-invalid @enderror">
+                            @error('admin') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted">PASSWORD API/FTP</label>
                             <div class="input-group">
-                                <input type="{{ $showPassword ? 'text' : 'password' }}" wire:model.defer="password" class="form-control">
+                                <input type="{{ $showPassword ? 'text' : 'password' }}" wire:model.defer="password" class="form-control @error('password') is-invalid @enderror">
                                 <button class="btn btn-outline-secondary" type="button" wire:click="togglePassword">
                                     <i class="bi bi-{{ $showPassword ? 'eye-slash' : 'eye' }}"></i>
                                 </button>
+                                @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
 
@@ -278,17 +285,19 @@
                         
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-primary">VERSIÓN DEL PORTAL</label>
-                            <select wire:model.defer="hotspot_version_id" class="form-select border-primary border-opacity-50 shadow-sm">
+                            <select wire:model.defer="hotspot_version_id" class="form-select border-primary border-opacity-50 shadow-sm @error('hotspot_version_id') is-invalid @enderror">
                                 <option value="">-- Seleccionar Versión --</option>
                                 @foreach($hotspotVersions as $version)
                                     <option value="{{ $version->id }}">{{ $version->name }}</option>
                                 @endforeach
                             </select>
+                            @error('hotspot_version_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold text-primary">NOMBRE COMERCIAL</label>
-                            <input type="text" wire:model.defer="comercio_nombre" class="form-control border-primary border-opacity-50 shadow-sm">
+                            <input type="text" wire:model.defer="comercio_nombre" class="form-control border-primary border-opacity-50 shadow-sm @error('comercio_nombre') is-invalid @enderror">
+                            @error('comercio_nombre') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="col-md-6">
