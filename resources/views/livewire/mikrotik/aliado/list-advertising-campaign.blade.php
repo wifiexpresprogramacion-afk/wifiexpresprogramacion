@@ -173,6 +173,7 @@
                             <input type="file" wire:model="media" class="form-control">
                             
                             {{-- VISTA PREVIA --}}
+                            valor: {{ $media->temporaryUrl() }}
                             <div class="mt-3 p-3 border rounded-4 bg-light text-center" style="border-style: dashed !important;">
                                 @if ($media) 
                                     @if($media_type == 'imagen')
