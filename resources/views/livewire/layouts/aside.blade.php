@@ -223,16 +223,6 @@
                 @endif
             </a>
 
-            <a href="{{ route('packages.index') }}" class="sidebar-link {{ request()->routeIs('packages.index') ? 'active' : '' }}">
-                <i class="bi bi-box-seam"></i> 
-                <span class="menu-text">Planes Comerciales</span>
-                @php
-                    $totalPackages = \App\Models\Package::count();
-                @endphp
-                <span class="badge rounded-pill bg-primary ms-2">{{ $totalPackages ?? '0' }}</span>
-            </a>
-            
-
             <a href="" class="sidebar-link">
                 <i class="bi bi-calendar-event"></i> 
                 <span class="menu-text">Listar Citas</span>
@@ -294,6 +284,14 @@
                         <i class="bi bi-images"></i> 
                         <span class="menu-text">Carrusel</span>
                     </a>
+                    <a href="{{ route('packages.index') }}" class="sidebar-link {{ request()->routeIs('packages.index') ? 'active' : '' }}">
+                        <i class="bi bi-box-seam"></i> 
+                        <span class="menu-text">Planes Comerciales</span>
+                        @php
+                            $totalPackages = \App\Models\Package::count();
+                        @endphp
+                        <span class="badge rounded-pill bg-primary ms-2">{{ $totalPackages ?? '0' }}</span>
+                    </a>
                     <a href="{{ route('mikrotik.crear-directorios') }}" class="sidebar-link {{ request()->routeIs('mikrotik.crear-directorios') ? 'active' : '' }}">
                         <i class="bi bi-folder-plus"></i>  
                         <span class="menu-text">Gestionar Directorios</span>
@@ -326,6 +324,11 @@
                         <i class="bi bi-gear-wide-connected"></i> 
                         <span class="menu-text">Ajustes Sistema</span>
                     </a>
+                    <a href="{{ route('mikrotik.data.notificaciones') }}" 
+                        class="sidebar-link {{ request()->routeIs('mikrotik.data.notificaciones') ? 'active' : '' }}">
+                            <i class="bi bi-bell-fill"></i> 
+                            <span class="menu-text">NOTIFICACIONES APP</span>
+                    </a>
                 </div>
             </div>
 
@@ -334,12 +337,6 @@
                 <span class="menu-text">Auditoría Bridge</span>
                 <span class="badge rounded-pill bg-dark text-white ms-2">LIVE</span>
             </a>
-
-            <a href="{{ route('mikrotik.data.notificaciones') }}" 
-                class="sidebar-link {{ request()->routeIs('mikrotik.data.notificaciones') ? 'active' : '' }}">
-                    <i class="bi bi-bell-fill"></i> 
-                    <span class="menu-text">NOTIFICACIONES APP</span>
-                </a>
 
             {{-- NUEVO ENLACE: REPORTE GLOBAL DE VENTAS --}}
             <a href="{{ route('mikrotik.router.all-sales') }}" class="sidebar-link {{ request()->routeIs('mikrotik.router.all-sales') ? 'active' : '' }}">
