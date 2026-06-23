@@ -176,8 +176,10 @@
                             <div class="mt-3 p-3 border rounded-4 bg-light text-center" style="border-style: dashed !important;">
                                 @if ($media) 
                                     @if($media_type == 'imagen')
+                                        {{ $media->temporaryUrl() }}
                                         <img src="{{ $media->temporaryUrl() }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
                                     @else
+                                        No es imagen
                                         <div class="small text-primary">Video: {{ $media->getClientOriginalName() }}</div>
                                     @endif
                                 @elseif($selected_id && $current_media_path)                                    
