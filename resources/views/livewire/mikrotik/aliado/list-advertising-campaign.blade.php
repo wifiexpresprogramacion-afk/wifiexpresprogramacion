@@ -175,12 +175,14 @@
                             {{-- VISTA PREVIA --}}
                             <div class="mt-3 p-3 border rounded-4 bg-light text-center" style="border-style: dashed !important;">
                                 @if ($media) 
+                                    media
                                     @if($media_type == 'imagen')
                                         <img src="{{ $media->temporaryUrl() }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
                                     @else
                                         <div class="small text-primary">Video: {{ $media->getClientOriginalName() }}</div>
                                     @endif
-                                @elseif($selected_id && $current_media_path)                                    
+                                @elseif($selected_id && $current_media_path) 
+                                    hola                                   
                                     @if($media_type == 'imagen')
                                         <img src="{{ asset('s' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @endif
