@@ -272,13 +272,15 @@
                             <div class="mt-3 p-3 border rounded-4 bg-light text-center" style="border-style: dashed !important;">
                                 @if ($media) 
                                     @if($media_type == 'imagen')
-                                        <img src="{{ $media->temporaryUrl() }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
+                                        <img src="{{ $media->temporaryUrl() }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @else
-                                        <div class="small text-primary">Video: {{ $media->getClientOriginalName() }}</div>
+                                        <video src="{{ $media->temporaryUrl() }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
                                     @endif
                                 @elseif($selected_id && $current_media_path)
                                     @if($media_type == 'imagen')
-                                        <img src="{{ asset('storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
+                                        <img src="{{ asset('storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                                    @elseif($media_type == 'video')
+                                        <video src="{{ asset('storage/' . $current_media_path) }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
                                     @endif
                                 @else
                                     <span class="text-muted small">Sin archivo seleccionado</span>
