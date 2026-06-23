@@ -151,7 +151,6 @@ class ListRouters extends Component
                 'packages' => $planesAliado,
                 'selected' => null
             ]);
-        }
         $this->openModal();
     }
 
