@@ -177,6 +177,14 @@
                     </div>
                 </div>
                 <div class="modal-body p-4">
+                    {{-- BLOQUE DE ERROR DENTRO DEL MODAL --}}
+                    @if (session()->has('error'))
+                        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="row g-3">
                         <div class="col-12">
                             <div class="bg-primary bg-opacity-10 p-3 rounded-4 border-start border-4 border-primary mb-2">
