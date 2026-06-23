@@ -173,19 +173,16 @@
                             <input type="file" wire:model="media" class="form-control">
                             
                             {{-- VISTA PREVIA --}}
-                            valor: {{ $current_media_path }}
                             <div class="mt-3 p-3 border rounded-4 bg-light text-center" style="border-style: dashed !important;">
                                 @if ($media) 
                                     @if($media_type == 'imagen')
-                                        {{ $media->temporaryUrl() }}
                                         <img src="{{ $media->temporaryUrl() }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
                                     @else
-                                        No es imagen
                                         <div class="small text-primary">Video: {{ $media->getClientOriginalName() }}</div>
                                     @endif
                                 @elseif($selected_id && $current_media_path)                                    
                                     @if($media_type == 'imagen')
-                                        <img src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                                        <img src="{{ asset('storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @endif
                                     
                                 @else
