@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class ListRouters extends Component
 {
-    public $selectedAliado = null; 
     public $isModalOpen = false;
     public $showPassword = false;
     public $routerStatus = []; 
@@ -26,33 +25,23 @@ class ListRouters extends Component
 
     public function render()
     {
-        $aliados = User::where('role', 'aliado')->orwhere('role', 'aliadoSmartData')->get();
         $hotspotVersions = HotspotVersion::all();
         $setting = Setting::where('user_id', Auth::id())->first();
         $connectionMode = $setting ? (int)$setting->mikrotik_connection_mode : 0;
 
-        $packages = collect();
-        $ownerId = $this->user_id ?: $this->selectedAliado;
-        if ($ownerId) {
-            $userOwner = User::find($ownerId);
-            if ($userOwner) {
-                $packages = $userOwner->packages()
-                    ->wherePivot('status', 'active')
-                    ->wherePivot('end_date', '>=', now())
-                    ->get();
-            }
-        }
+        $userOwner = Auth::user();
+        $packages = $userOwner->packages()
+            ->wherePivot('status', 'active')
+            ->wherePivot('end_date', '>=', now())
+            ->get();
 
         $routers = Router::query()
-            ->when($this->selectedAliado, function($query) {
-                $query->where('user_id', $this->selectedAliado);
-            })
+            ->where('user_id', Auth::id())
             ->with(['user', 'hotspotVersion', 'package'])
             ->latest()
             ->get();
 
         return view('livewire.mikrotik.aliado.list-routers', [
-            'aliados' => $aliados,
             'routers' => $routers,
             'connectionMode' => $connectionMode,
             'hotspotVersions' => $hotspotVersions,
@@ -75,9 +64,7 @@ class ListRouters extends Component
                 })->toArray();
 
                 // Obtenemos los routers actuales de la vista
-                $routers = Router::when($this->selectedAliado, function($query) {
-                    $query->where('user_id', $this->selectedAliado);
-                })->get();
+                $routers = Router::where('user_id', Auth::id())->get();
 
                 foreach ($routers as $r) {
                     $macLimpia = strtoupper(trim($r->macAddress));
@@ -92,6 +79,11 @@ class ListRouters extends Component
 
     public function edit(Router $router) 
     {
+        // Seguridad: Asegurarse que el aliado solo edite sus propios routers
+        if ($router->user_id !== Auth::id()) {
+            abort(403, 'Acción no autorizada.');
+        }
+
         $this->router_id = $router->id;
         $this->user_id = $router->user_id; 
         $this->package_id = $router->package_id;
@@ -147,16 +139,13 @@ class ListRouters extends Component
     public function create() 
     {
         $this->reset(['identity', 'ip', 'macAddress', 'api_port', 'admin', 'password', 'location', 'router_id', 'dns', 'comercio_nombre', 'hotspot_url', 'status', 'is_active', 'hotspot_version_id', 'package_id']);
-        $this->user_id = $this->selectedAliado; 
+        $this->user_id = Auth::id(); 
         $this->api_port = 49152; 
         $this->status = 'Habilitado';
 
-        if($this->user_id) {
-            $userOwner = User::find($this->user_id);
-            $planesAliado = $userOwner ? $userOwner->packages()
-                ->wherePivot('status', 'active')
-                ->wherePivot('end_date', '>=', now())
-                ->get() : collect();
+        $userOwner = Auth::user();
+        $planesAliado = $userOwner->packages()
+            ->wherePivot('status', 'active')->wherePivot('end_date', '>=', now())->get();
 
             $this->emit('updatePackageList', [
                 'packages' => $planesAliado,
@@ -168,8 +157,10 @@ class ListRouters extends Component
 
     public function store()
     {
+        // Forzar el user_id al del aliado autenticado por seguridad
+        $this->user_id = Auth::id();
+
         $this->validate([
-            'user_id' => 'required',
             'package_id' => 'required',
             'identity' => 'required',
             'ip' => 'required',
@@ -245,7 +236,12 @@ class ListRouters extends Component
     public function destroy($id)
     {
         try {
-            $router = Router::findOrFail($id);
+            // Seguridad: Asegurarse que el aliado solo elimine sus propios routers
+            $router = Router::where('user_id', Auth::id())->findOrFail($id);
+
+            // Aquí iría la lógica para decrementar el contador del paquete
+            // ...
+
             $router->delete();
             session()->flash('message', 'Router eliminado correctamente.');
         } catch (\Exception $e) {

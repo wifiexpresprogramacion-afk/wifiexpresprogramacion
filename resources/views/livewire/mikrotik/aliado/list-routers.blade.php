@@ -19,18 +19,10 @@
         <div class="card-body p-4">
             <div class="row align-items-center">
                 <div class="col-md-4">
-                    <h4 class="fw-bold mb-1 text-dark">Infraestructura Global</h4>
-                    <p class="text-muted small mb-0">Gestión de nodos MikroTik por Aliado</p>
+                    <h4 class="fw-bold mb-1 text-dark">Mi Infraestructura</h4>
+                    <p class="text-muted small mb-0">Gestión de mis Routers y Nodos</p>
                 </div>
-                <div class="col-md-3">
-                    <select wire:model="selectedAliado" class="form-select rounded-pill border-2 border-primary border-opacity-25 shadow-none">
-                        <option value="">-- Todos los Aliados --</option>
-                        @foreach($aliados as $aliado)
-                            <option value="{{ $aliado->id }}">{{ $aliado->name }} ({{ $aliado->email }})</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-5 text-end">
+                <div class="col-md-8 text-end">
                     <span class="badge {{ $connectionMode === 1 ? 'bg-info' : 'bg-dark' }} rounded-pill px-3 py-2 me-2">
                         <i class="bi bi-hdd-network-fill me-1"></i> MODO: {{ $connectionMode === 1 ? 'REMOTO (DNS)' : 'LOCAL (IP)' }}
                     </span>
@@ -38,7 +30,7 @@
                         <span wire:loading wire:target="refreshStatus" class="spinner-border spinner-border-sm me-1"></span>
                         <i wire:loading.remove wire:target="refreshStatus" class="bi bi-arrow-clockwise me-1"></i> REFRESCAR ESTADOS
                     </button>
-                    @if($selectedAliado && ($routers->count() < $packages->sum('pivot.allowed_routers')))
+                    @if($routers->count() < $packages->sum('pivot.allowed_routers'))
                         <button wire:click="create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
                             <i class="bi bi-plus-lg me-1"></i> NUEVO ROUTER
                         </button>
@@ -234,13 +226,6 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mt-4">
-                            <label class="form-label small fw-bold text-muted">ALIADO PROPIETARIO</label>
-                            <select wire:model="user_id" class="form-select bg-light">
-                                <option value="">Seleccione...</option>
-                                @foreach($aliados as $a) <option value="{{ $a->id }}">{{ $a->name }}</option> @endforeach
-                            </select>
-                        </div>
                         <div class="col-md-6 mt-4">
                             <label class="form-label small fw-bold text-muted">IDENTIDAD MK</label>
                             <input type="text" wire:model.defer="identity" class="form-control">
