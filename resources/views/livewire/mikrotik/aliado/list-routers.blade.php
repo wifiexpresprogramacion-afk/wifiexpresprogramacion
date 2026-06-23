@@ -48,7 +48,7 @@
                 <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden position-relative border-top border-4 {{ $statusReal === true ? 'border-success' : ($statusReal === false ? 'border-danger' : 'border-secondary') }}">
                     
                     {{-- Botón Eliminar --}}
-                    <div class="position-absolute top-0 start-0 m-3" style="z-index: 10;">
+                    <div class="position-absolute top-0 start-0 m-3" style="z-index: 10; d-none">
                         <button wire:click="destroy({{ $r->id }})" 
                                 onclick="confirm('¡ADVERTENCIA! ¿Estás seguro de eliminar este Router? Al eliminar este router se perderán datos o quedarán datos huérfanos asociados a este equipo.') || event.stopImmediatePropagation()"
                                 class="btn btn-link text-danger p-0 shadow-none" title="Eliminar Router">
