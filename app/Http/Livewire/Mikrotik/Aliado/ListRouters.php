@@ -235,15 +235,24 @@ class ListRouters extends Component
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
+
             // Seguridad: Asegurarse que el aliado solo elimine sus propios routers
             $router = Router::where('user_id', Auth::id())->findOrFail($id);
 
-            // Aquí iría la lógica para decrementar el contador del paquete
-            // ...
+            // Decrementar el contador de routers en el plan del aliado si tiene uno asignado.
+            if ($router->package_id) {
+                PackageUser::where('user_id', $router->user_id)
+                    ->where('package_id', $router->package_id)
+                    ->where('status', 'active')
+                    ->decrement('router_quantity');
+            }
 
             $router->delete();
+            DB::commit();
             session()->flash('message', 'Router eliminado correctamente.');
         } catch (\Exception $e) {
+            DB::rollBack();
             session()->flash('error', 'Error al eliminar el router: ' . $e->getMessage());
         }
     }
