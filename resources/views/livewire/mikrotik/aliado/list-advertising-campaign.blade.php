@@ -183,6 +183,8 @@
                                 @elseif($selected_id && $current_media_path)
                                     @if($media_type == 'imagen')
                                         <img src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" class="img-fluid rounded shadow-sm" style="max-height: 150px;">
+                                    @elseif($media_type == 'video')
+                                        <video src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
                                     @endif
                                 @else
                                     <span class="text-muted small">Sin archivo seleccionado</span>
