@@ -181,10 +181,11 @@
                                         <div class="small text-primary">Video: {{ $media->getClientOriginalName() }}</div>
                                     @endif
                                 @elseif($selected_id && $current_media_path)
+                                    @php $campaign = \App\Models\AdvertisingCampaign::find($selected_id); @endphp
                                     @if($media_type == 'imagen')
-                                        <img src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                                        <img src="{{ $campaign->media_url }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @elseif($media_type == 'video')
-                                        <video src="{{ \App\Models\AdvertisingCampaign::find($selected_id)->media_url }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
+                                        <video src="{{ $campaign->media_url }}" controls class="img-fluid rounded shadow-sm" style="max-height: 200px;"></video>
                                     @endif
                                 @else
                                     <span class="text-muted small">Sin archivo seleccionado</span>
