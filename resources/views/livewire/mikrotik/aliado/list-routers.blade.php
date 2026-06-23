@@ -30,13 +30,13 @@
             @php 
                 $online = $routerStatus[$r->id] ?? false; 
                 $currentPackage = $packages->firstWhere('id', $r->package_id);
-                $canDelete = !($currentPackage && $currentPackage->pivot->allowed_routers < 2);
+                // $canDelete = !($currentPackage && $currentPackage->pivot->allowed_routers < 2);
             @endphp
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden position-relative border-top border-4 {{ $online ? 'border-success' : 'border-danger' }}">
                     
                     {{-- Botón Eliminar --}}
-                    @if($canDelete)
+                    {{-- @if($canDelete)
                     <div class="position-absolute top-0 start-0 m-3" style="z-index: 10;">
                         <button wire:click="destroy({{ $r->id }})" 
                                 onclick="confirm('¡ADVERTENCIA! ¿Estás seguro de eliminar este Router? Al eliminar este router se perderán datos o quedarán datos huérfanos asociados a este equipo.') || event.stopImmediatePropagation()"
@@ -44,7 +44,7 @@
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </div>
-                    @endif
+                    @endif --}}
 
                     <div class="position-absolute top-0 end-0 m-3 text-end">
                         <span class="badge {{ $online ? 'bg-success' : 'bg-danger' }} rounded-pill" style="font-size: 0.65rem;">
@@ -128,7 +128,7 @@
 
     @if($isModalOpen)
     <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5); z-index: 1050; backdrop-filter: blur(4px);">
-        <div class="modal-dialog modal-lg" style="margin-top: 5rem;">
+        <div class="modal-dialog modal-lg" style="margin-top: 6rem; margin-bottom: 5rem;">
             <div class="modal-content shadow-lg border-0 rounded-4">
                 <div class="modal-header bg-dark text-white p-4">
                     <h5 class="modal-title fw-bold">
@@ -143,46 +143,48 @@
                         <div class="col-12">
                             <div class="bg-primary bg-opacity-10 p-3 rounded-4 border-start border-4 border-primary mb-2">
                                 <label class="form-label small fw-bold text-primary mb-1">PLAN DE MEMBRESÍA ADQUIRIDO</label>
-                                <select wire:model="package_id" class="form-select border-0 shadow-sm">
+                                <select wire:model="package_id" class="form-select border-0 shadow-sm @error('package_id') is-invalid @enderror">
                                     <option value="">-- Seleccionar Plan --</option>
                                     @foreach($packages as $p)
                                         <option value="{{ $p->id }}">
-                                            {{ $p->name }} (Cupos contratados: {{ $p->pivot->allowed_routers }})
+                                            {{ $p->name }} (Límite: {{ $p->pivot->allowed_routers }} routers)
                                         </option>
                                     @endforeach
                                 </select>
+                                @if($packages->isEmpty())
+                                    <small class="text-danger d-block mt-1">No posees planes activos para asignar.</small>
+                                @endif
+                                @error('package_id') <small class="text-danger d-block mt-1">{{ $message }}</small> @enderror
                             </div>
                         </div>
 
-                        <div class="col-md-6 mt-3">
+                        <div class="col-md-6 mt-4">
                             <label class="form-label small fw-bold text-muted">IDENTIDAD MK</label>
-                            <input type="text" wire:model.defer="identity" class="form-control bg-light border-0">
+                            <input type="text" wire:model.defer="identity" class="form-control @error('identity') is-invalid @enderror">
+                            @error('identity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="col-md-6 mt-3">
+                        <div class="col-md-6 mt-4">
                             <label class="form-label small fw-bold text-muted">MAC ADDRESS</label>
-                            <input type="text" wire:model.defer="macAddress" class="form-control bg-light border-0">
+                            <input type="text" wire:model.defer="macAddress" class="form-control @error('macAddress') is-invalid @enderror">
+                            @error('macAddress') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="col-md-12">
                             <label class="form-label small fw-bold text-primary">NOMBRE COMERCIAL</label>
-                            <input type="text" wire:model.defer="comercio_nombre" class="form-control border-primary border-opacity-25 shadow-sm">
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label small fw-bold text-muted text-uppercase" style="letter-spacing: 1px;">Link del Portal (Solo lectura)</label>
-                            <input type="text" wire:model.defer="hotspot_url" class="form-control bg-light text-muted" readonly disabled>
+                            <input type="text" wire:model.defer="comercio_nombre" class="form-control border-primary border-opacity-25 shadow-sm @error('comercio_nombre') is-invalid @enderror">
+                            @error('comercio_nombre') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="col-md-12">
                             <label class="form-label small fw-bold text-muted">UBICACIÓN FÍSICA</label>
-                            <input type="text" wire:model.defer="location" class="form-control bg-light border-0">
+                            <input type="text" wire:model.defer="location" class="form-control bg-light border-0" placeholder="Ej: Centro Comercial, Piso 2, Local 25">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light border-0 p-4">
                     <button wire:click="closeModal" class="btn btn-secondary rounded-pill px-4">Cancelar</button>
-                    <button wire:click.prevent="store" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                    <button wire:click.prevent="store" wire:loading.attr="disabled" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
                         <i class="bi bi-save me-1"></i> GUARDAR CAMBIOS
                     </button>
                 </div>
