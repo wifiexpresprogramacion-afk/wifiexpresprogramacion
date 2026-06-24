@@ -182,7 +182,7 @@
                                     @endif
                                 @elseif($selected_id && $current_media_path) 
                                     hola
-                                    <img src="{{ asset('https://wifiexpres.com/storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                                    <img src="{{ asset('https://wifiexpres.com/storage' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                               
                                     @if($media_type == 'imagen')
                                         como estas
