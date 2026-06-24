@@ -194,7 +194,7 @@ class CambiarTrialUserprofile extends Component
     public function render()
     {
         return view('livewire.mikrotik.herramientas.cambiar-trial-userprofile', [
-            'aliados' => User::where('role', 'aliado')->get(),
+            'aliados' => User::where('role', 'aliado')->where('role', 'aliadoSmartData')->get(),
             'routers' => Router::when($this->selectedAliado, fn($q) => $q->where('user_id', $this->selectedAliado))->get()
         ])->layout('layouts.app');
     }
