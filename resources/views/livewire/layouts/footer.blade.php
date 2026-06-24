@@ -2,15 +2,15 @@
     <footer class="text-white">
         <div class="container-fluid px-0">
             
-            <div class="row footer-main py-5 m-0 px-md-5 align-items-center">
+            <div class="row footer-main py-5 m-0 px-md-5 align-items-center d-none d-md-flex">
                 <div class="col-12 col-md-3 mb-4 mb-md-0 text-center text-md-start">
                     <img src="{{ asset('img/logo-wifiexpres.png') }}" class="img-fluid" style="max-width: 200px;" alt="Logo WiFiExpres">
                 </div>
-                <div class="col-12 col-md-3 mb-4 mb-md-0 text-center text-md-start d-none d-md-block">
+                <div class="col-12 col-md-3 mb-4 mb-md-0 text-center text-md-start">
                     <h5 class="fw-bold"><i class="bi bi-geo-alt-fill me-2"></i>Dirección</h5>
                     <p class="small mb-0">Av. Vollmer - Edif. Normandie - Piso 6 Ofic. 612<br>San Bernardino - Caracas</p>
                 </div>
-                <div class="col-12 col-md-3 mb-4 mb-md-0 text-center text-md-start d-none d-md-block">
+                <div class="col-12 col-md-3 mb-4 mb-md-0 text-center text-md-start">
                     <h5 class="fw-bold"><i class="bi bi-clock-fill me-2"></i>Horario</h5>
                     <p class="small mb-0">Lun - Vie: 8:00 a.m. - 5:00 p.m.<br>Sáb: 8:00 a.m. - 2:00 p.m.</p>
                 </div>
