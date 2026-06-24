@@ -234,9 +234,10 @@ class ListAdvertisingCampaign extends Component
     public static function savePortalData(Request $request)
     {
         try {
-            $mac = strtoupper($request->input('mac_cliente'));
+            $mac_address = $request->input('ip_cliente');
             $identity = $request->input('identity');
             $isCampaign = $request->input('is_campaign', false);
+            $username = strtoupper($request->input('mac_cliente'));
 
             $router = Router::where('identity', $identity)->orWhere('macAddress', $identity)->first();
             if (!$router) {
@@ -298,6 +299,13 @@ class ListAdvertisingCampaign extends Component
                     ]);
                 }
             }
+
+            TicketLog::create([
+                    'router_id'   => $router->id,
+                    'username'    => $username,
+                    'mac_address' => $mac,
+                    'created_at'  => now(),
+                ]);
 
             return response()->json(['success' => true]);
 
