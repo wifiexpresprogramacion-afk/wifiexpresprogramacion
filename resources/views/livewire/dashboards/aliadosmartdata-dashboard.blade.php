@@ -9,7 +9,7 @@
     {{-- HEADER --}}
     <div class="row mb-4 align-items-center">
         <div class="col-md-6">
-            <h2 class="fw-bold text-dark mb-0"></h2>
+            <!-- <h2 class="fw-bold text-dark mb-0"></h2> -->
             
         </div>
         <div class="col-md-6 text-end">
@@ -192,7 +192,9 @@
                                 </span>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="list-group-item border-0 px-4 py-3 text-center text-muted small">No hay actividad reciente.</div>
+                    @endforelse
                 </div>
             </div>
         </div>
