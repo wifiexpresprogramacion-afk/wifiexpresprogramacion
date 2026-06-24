@@ -20,6 +20,8 @@ class MikrotikController extends Controller
         $type     = $request->type; // 'login' o 'logout'
         $identity = $request->identity; // Nombre del MikroTik
 
+        dd($request->all());
+
         try {
             // Buscamos el router por identity si no viene un ID numérico claro
             $router = Router::where('identity', $identity)->first();
