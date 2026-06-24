@@ -263,6 +263,11 @@ class ListAdvertisingCampaign extends Component
                     'cellphone'     => $request->input('cellphone'),
                     'profile'       => 'conexion_estandar'
                 ]);
+            }else{
+                // Si es campaña, se puede registrar con un perfil especial
+                $userData['full_name'] = $request->input('full_name');
+                $userData['cellphonecode'] = $request->input('cellphonecode');
+                $userData['cellphone'] = $request->input('cellphone');
             }
 
             $userMikrotik = UserMikrotik::updateOrCreate(['name' => $mac, 'router_id' => $router->id], $userData);
