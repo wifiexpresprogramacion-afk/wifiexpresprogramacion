@@ -9,15 +9,27 @@
                 <div class="card-body">
                     @if(!$selectedUser)
                         <!-- Buscador -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
+                        <div class="row mb-4 g-3">
+                            @if(in_array($authUser->role, ['aliado', 'aliadoSmartData']) && $routers->count() > 1)
+                            <div class="col-md-4">
+                                <select wire:model="selectedRouterId" class="form-select">
+                                    <option value="">Todos los Routers</option>
+                                    @foreach($routers as $router)
+                                        <option value="{{ $router->id }}">{{ $router->identity }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
+                            <div class="col-md-8">
                                 <div class="input-group">
                                     <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
                                     <input type="text" class="form-control border-start-0 ps-0" 
                                         placeholder="Nombre o correo + Enter para buscar..." 
                                         wire:model.defer="search" 
                                         wire:keydown.enter="$refresh">
-                                    <button class="btn btn-primary mb-0" type="button" wire:click="$refresh">Buscar</button>
+                                    <button class="btn btn-primary mb-0" type="button" wire:click="$refresh" wire:loading.attr="disabled">
+                                        <i class="bi bi-search"></i> Buscar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -28,6 +40,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Cliente</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Router</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Teléfono</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fecha</th>
@@ -41,6 +54,9 @@
                                                 <div class="d-flex flex-column">
                                                     <h6 class="mb-0 text-sm">{{ $user->full_name ?? $user->name }}</h6>
                                                 </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">{{ $user->router->identity ?? 'N/A' }}</span>
                                             </td>
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">{{ $user->cellphonecode }}{{ $user->cellphone }}</p>
@@ -59,7 +75,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3" class="text-center py-4 text-sm text-secondary">No se encontraron clientes.</td>
+                                            <td colspan="6" class="text-center py-4 text-sm text-secondary">No se encontraron clientes.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
