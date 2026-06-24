@@ -50,8 +50,8 @@
                             <label class="form-label fw-bold text-muted small">BANNER PRINCIPAL DEL PORTAL</label>
                             <div class="d-flex align-items-center p-3 bg-light rounded-4 border-0">
                                 <div class="me-4 position-relative">
-                                    <img src="{{ $router->banner_router }}" 
-                                         class="rounded-3 shadow-sm object-fit-cover bg-white" 
+                                    <img src="{{ $router->banner_router }}"
+                                         class="rounded-3 shadow-sm object-fit-contain bg-white" 
                                          style="width: 140px; height: 80px; border: 2px solid white;">
                                     
                                     {{-- Botón para eliminar banner --}}
@@ -70,11 +70,12 @@
                                 </div>
                                 
                                 <div class="flex-grow-1">
-                                    <label class="btn btn-dark btn-sm rounded-pill px-4 shadow-sm mb-0" style="cursor: pointer;">
-                                        <i class="bi bi-camera me-2"></i> Cambiar Banner
+                                    <label class="btn btn-dark btn-sm rounded-pill px-3 px-md-4 shadow-sm mb-0" style="cursor: pointer;">
+                                        <i class="bi bi-camera"></i>
+                                        <span class="d-none d-md-inline ms-2">Cambiar Banner</span>
                                         <input type="file" wire:model="banner_photo" hidden accept="image/*">
                                     </label>
-                                    <p class="text-muted small mt-2 mb-0">Esta imagen aparecerá como cabecera en el inicio de sesión.</p>
+                                    <p class="text-muted small mt-2 mb-0 d-none d-md-block">Esta imagen aparecerá como cabecera en el inicio de sesión.</p>
                                 </div>
                             </div>
                             @error('banner_photo') <small class="text-danger d-block mt-2">{{ $message }}</small> @enderror
@@ -152,7 +153,9 @@
                 </div>
                 <div class="card-footer bg-white border-top p-4 text-end">
                     <button wire:click="save" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow hover-lift" wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="save">GUARDAR Y SINCRONIZAR</span>
+                        <span wire:loading.remove wire:target="save">
+                            <i class="bi bi-save me-1"></i> GUARDAR Y SINCRONIZAR
+                        </span>
                         <span wire:loading wire:target="save">
                             <span class="spinner-border spinner-border-sm me-2"></span> SINCRONIZANDO...
                         </span>
