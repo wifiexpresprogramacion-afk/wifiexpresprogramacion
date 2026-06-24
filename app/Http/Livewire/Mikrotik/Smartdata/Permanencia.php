@@ -43,6 +43,11 @@ class Permanencia extends Component
         $this->toDate = Carbon::now()->format('Y-m-d');
     }
 
+    public function updatedSelectedRouter($value)
+    {
+        $this->consultar();
+    }
+
     public function consultar()
     {
         $start = Carbon::parse($this->fromDate)->startOfDay();
