@@ -235,7 +235,7 @@ class ListAdvertisingCampaign extends Component
     public static function savePortalData(Request $request)
     {
         try {
-            $mac_address = $request->input('ip_cliente');
+            $mac = $request->input('ip_cliente');
             $identity = $request->input('identity');
             $isCampaign = $request->input('is_campaign', false);
             $username = strtoupper($request->input('mac_cliente'));
@@ -303,7 +303,7 @@ class ListAdvertisingCampaign extends Component
 
             TicketLog::create([
                     'router_id'   => $router->id,
-                    'username'    => $username,
+                    'username'    => 'T-' . $username,
                     'mac_address' => $mac,
                     'created_at'  => now(),
                 ]);
