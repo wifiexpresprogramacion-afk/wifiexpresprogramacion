@@ -29,7 +29,7 @@
                     </span> --}}
                     <button wire:click="refreshStatus" wire:loading.attr="disabled" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm me-2">
                         <span wire:loading wire:target="refreshStatus" class="spinner-border spinner-border-sm me-1"></span>
-                        <i wire:loading.remove wire:target="refreshStatus" class="bi bi-arrow-clockwise"></i> 
+                        <i wire:loading.remove wire:target="refreshStatus" class="bi bi-arrow-clockwise align-middle"></i> 
                         <span class="d-none d-md-inline ms-1">REFRESCAR ESTADOS</span>
                     </button>
                     @if($routers->count() < $packages->sum('pivot.allowed_routers'))
