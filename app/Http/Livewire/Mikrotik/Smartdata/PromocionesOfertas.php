@@ -28,9 +28,7 @@ class PromocionesOfertas extends Component
     public $age_range_id;
     public $media_type = 'imagen', $media, $current_media_path;
     public $question_text, $question_type = 'simple';
-    public $options = [];
-    public $on_connect = false;
-    public $only_new = false;
+    public $options = []; // Array para las opciones dinámicas
 
     public $user_id;
 
@@ -63,8 +61,6 @@ class PromocionesOfertas extends Component
         $this->question_text = 'Publicidad Estándar';
         $this->question_type = 'simple';
         $this->options = [];
-        $this->on_connect = false;
-        $this->only_new = false;
         $this->selected_id = null;
         $this->current_media_path = null;
     }
@@ -89,27 +85,12 @@ class PromocionesOfertas extends Component
         $this->media_type = $campaign->media_type;
         $this->question_text = $campaign->question_text;
         $this->question_type = $campaign->question_type;
-
-        // Recuperar reglas de envío desde el JSON options
-        $opts = $campaign->options ?? [];
-        $this->on_connect = $opts['on_connect'] ?? false;
-        $this->only_new = $opts['only_new'] ?? false;
+        $this->options = $campaign->options ?? [];
 
         $this->user_id = $campaign->user_id;
         $this->current_media_path = $campaign->media_path;
         
         $this->isModalOpen = true;
-    }
-
-    public function addOption()
-    {
-        $this->options[] = '';
-    }
-
-    public function removeOption($index)
-    {
-        unset($this->options[$index]);
-        $this->options = array_values($this->options);
     }
 
     public function delete($id)
@@ -129,8 +110,6 @@ class PromocionesOfertas extends Component
             'router_identity' => 'required', // El router es obligatorio
             'age_range_id' => 'required', // El rango de edad es obligatorio
             'media' => $this->selected_id ? 'nullable|max:20480' : 'required|max:20480',
-            'question_text' => 'required',
-            'options' => $this->question_type != 'simple' ? 'required|array|min:2' : 'nullable',
         ]);
 
         $data = [

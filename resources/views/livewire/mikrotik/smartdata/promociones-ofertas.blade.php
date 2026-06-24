@@ -65,8 +65,7 @@
                         </td>
                         <td class="text-center">
                             @php $opts = $camp->options ?? []; @endphp
-                            @if($opts['on_connect'] ?? false) <span class="badge bg-light text-dark border small">CONECTAR</span> @endif
-                            @if($opts['only_new'] ?? false) <span class="badge bg-light text-primary border small">NUEVOS</span> @endif
+                            <i class="bi bi-card-text text-secondary fs-5"></i>
                         </td>
                         <td class="text-center">
                             <div class="form-check form-switch d-inline-block">
@@ -113,7 +112,7 @@
                 
                 <div class="modal-body p-4">
                     <div class="row g-3">
-                        
+
                         {{-- Selector de Routers --}}
                         <div class="col-md-12">
                             <label class="form-label small fw-bold text-muted">Router de la Promoción</label>
@@ -126,9 +125,14 @@
                             @error('router_identity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <label class="form-label small fw-bold text-muted">Nombre</label>
                             <input type="text" wire:model="name" class="form-control" placeholder="Ej: Promo Verano">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-muted">Descripción (Opcional)</label>
+                            <textarea wire:model="description" class="form-control" rows="2" placeholder="Detalles de la promoción..."></textarea>
                         </div>
 
                         <div class="col-md-4">
@@ -139,7 +143,17 @@
                                 <option value="femenino">Femenino</option>
                             </select>
                         </div>
-                        
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Rango de Edad</label>
+                            <select wire:model="age_range_id" class="form-select">
+                                <option value="0">Cualquier edad</option>
+                                @foreach($ageRanges as $range)
+                                    <option value="{{ $range->id }}">{{ $range->name }} ({{ $range->min_age }}-{{ $range->max_age }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="col-md-4">
                             <label class="form-label small fw-bold text-muted">Rango de Edad</label>
                             <select wire:model="age_range_id" class="form-select">
@@ -176,26 +190,41 @@
                             </div>
                         </div>
 
-                        <hr class="my-3">
-
-                        <div class="col-12">
-                            <h6 class="fw-bold text-primary">Reglas de Envío Automático</h6>
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" wire:model="on_connect" id="on_connect_check">
-                                <label class="form-check-label" for="on_connect_check">
-                                    Mostrar al conectar al WiFi
-                                </label>
-                            </div>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" wire:model="only_new" id="only_new_check">
-                                <label class="form-check-label" for="only_new_check">
-                                    Mostrar solo a clientes nuevos
-                                </label>
-                            </div>
-                            <small class="text-muted d-block mt-2">
-                                <i class="bi bi-info-circle me-1"></i>Estas reglas determinan si la promoción aparece automáticamente en el portal cautivo.
-                            </small>
+                        <div class="col-md-8">
+                            <label class="form-label small fw-bold text-muted">Pregunta de Encuesta</label>
+                            <input type="text" wire:model="question_text" class="form-control" placeholder="¿Qué te parece nuestro servicio?">
                         </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">Tipo de Respuesta</label>
+                            <select wire:model="question_type" class="form-select">
+                                <option value="simple">Respuesta Abierta</option>
+                                <option value="single_choice">Opción Única (Radio)</option>
+                                <option value="multiple_choice">Múltiples Opciones (Check)</option>
+                            </select>
+                        </div>
+
+                        {{-- GESTIÓN DE OPCIONES --}}
+                        @if($question_type != 'simple')
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label small fw-bold text-primary mb-0">Opciones de Respuesta</label>
+                                <button type="button" wire:click="addOption" class="btn btn-sm btn-outline-primary rounded-pill">
+                                    <i class="bi bi-plus"></i> Agregar Opción
+                                </label>
+                            </div>
+                            @foreach($options as $index => $option)
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">{{ $index + 1 }}</span>
+                                <input type="text" wire:model.defer="options.{{ $index }}" class="form-control" placeholder="Texto de la opción">
+                                <button type="button" wire:click="removeOption({{ $index }})" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            @endforeach
+                            @error('options') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+                        @endif
                     </div>
                 </div>
 
