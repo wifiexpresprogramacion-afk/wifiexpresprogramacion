@@ -11,6 +11,7 @@ use App\Models\UserMikrotik;
 use App\Models\CampaignResponse;
 use App\Models\AgeRange;
 use App\Models\User;
+use App\Models\TicketLog;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
