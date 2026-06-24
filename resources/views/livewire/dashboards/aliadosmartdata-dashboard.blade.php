@@ -18,23 +18,23 @@
     </div>
 
     {{-- 1. STATS CARDS --}}
-    <div class="row g-4 mb-4">
+    <div class="row g-2 mb-3">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-2 text-center bg-white h-100">
+            <div class="card border-0 shadow-sm rounded-4 p-1 text-center bg-white h-100">
                 <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">
                     <i class="bi bi-broadcast text-primary me-1"></i> Routers Online
                 </h6>
-                <h3 class="fw-bold mb-0 {{ $stats['routers_online'] > 0 ? 'text-success' : 'text-danger' }}">
-                    {{ $stats['routers_online'] }} <span class="text-muted fs-6">/ {{ $stats['total_routers'] }}</span>
-                </h3>
+                <h4 class="fw-bold mb-0 {{ $stats['routers_online'] > 0 ? 'text-success' : 'text-danger' }}">
+                    {{ $stats['routers_online'] }} <span class="text-muted" style="font-size: .9rem;">/ {{ $stats['total_routers'] }}</span>
+                </h4>
             </div>
         </div>
         <div class="col-md-4"> 
-            <div class="card border-0 shadow-sm rounded-4 p-2 text-center bg-white h-100 d-flex flex-column">
+            <div class="card border-0 shadow-sm rounded-4 p-1 text-center bg-white h-100 d-flex flex-column">
                 <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">Suscripciones / Planes</h6>
-                <div class="mb-1" style="max-height: 50px; overflow-y: auto;">
+                <div class="mb-1" style="max-height: 42px; overflow-y: auto;">
                     @forelse($userPackages as $pkg)
-                        <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded-3 mb-1 border-start border-4 {{ $pkg->pivot->status === 'active' ? 'border-success' : ($pkg->pivot->status === 'pending' ? 'border-warning' : 'border-secondary') }} text-start">
+                        <div class="d-flex justify-content-between align-items-center bg-light p-1 px-2 rounded-3 mb-1 border-start border-4 {{ $pkg->pivot->status === 'active' ? 'border-success' : ($pkg->pivot->status === 'pending' ? 'border-warning' : 'border-secondary') }} text-start">
                             <span class="fw-bold small text-truncate" style="max-width: 140px;" title="{{ $pkg->name }}">
                                 {{ $pkg->name }}
                             </span>
@@ -61,28 +61,32 @@
                         <h2 class="fw-bold mb-0 text-muted fs-4">Sin Plan</h2>
                     @endforelse
                 </div>
-                @if($userPackages->where('pivot.allowed_routers', '<', 2)->isEmpty())
-                <button wire:click="openModal" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold mt-auto" style="font-size: .7rem;">
-                    <i class="bi bi-plus-circle me-1"></i> GESTIONAR
-                </button>
+                @php
+                    $user = auth()->user();
+                    $isAliado = in_array($user->role, ['aliado', 'aliadoSmartData']);
+                @endphp
+                @if (!($isAliado && $userPackages->isNotEmpty()))
+                    <button wire:click="openModal" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold mt-auto" style="font-size: .7rem;">
+                        <i class="bi bi-plus-circle me-1"></i> GESTIONAR
+                    </button>
                 @endif
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-2 text-center bg-white h-100">
+            <div class="card border-0 shadow-sm rounded-4 p-1 text-center bg-white h-100">
                 <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">Usuarios Online</h6>
-                <h3 class="fw-bold mb-0 text-info">{{ $stats['usuarios_online'] }}</h3>
+                <h4 class="fw-bold mb-0 text-info">{{ $stats['usuarios_online'] }}</h4>
             </div>
         </div>
     </div>
 
     {{-- 2. FILTROS DINÁMICOS --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
         <div class="card-body p-1 px-2">
-            <div class="row g-3 align-items-end">
+            <div class="row g-2 align-items-end">
                 <div class="col-md-4">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Equipo / Router</label>
-                    <select wire:model="router_id" class="form-select border-0 bg-light rounded-3 shadow-none">
+                    <select wire:model="router_id" class="form-select form-select-sm border-0 bg-light rounded-3 shadow-none">
                         @if(count($routers) > 1)
                             <option value="">📊 Todos los Routers</option>
                         @elseif(count($routers) == 0)
@@ -95,7 +99,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Rango</label>
-                    <select wire:model="periodo" class="form-select border-0 bg-light rounded-3 shadow-none">
+                    <select wire:model="periodo" class="form-select form-select-sm border-0 bg-light rounded-3 shadow-none">
                         <option value="dia">Hoy</option>
                         <option value="semana">Semana</option>
                         <option value="mes">Mes</option>
@@ -104,11 +108,11 @@
                 </div>
                 <div class="col">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Desde</label>
-                    <input type="date" wire:model="fecha_desde" class="form-control border-0 bg-light rounded-3 shadow-none" {{ $periodo != 'personalizado' ? 'disabled' : '' }}>
+                    <input type="date" wire:model="fecha_desde" class="form-control form-control-sm border-0 bg-light rounded-3 shadow-none" {{ $periodo != 'personalizado' ? 'disabled' : '' }}>
                 </div>
                 <div class="col">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Hasta</label>
-                    <input type="date" wire:model="fecha_hasta" class="form-control border-0 bg-light rounded-3 shadow-none" {{ $periodo != 'personalizado' ? 'disabled' : '' }}>
+                    <input type="date" wire:model="fecha_hasta" class="form-control form-control-sm border-0 bg-light rounded-3 shadow-none" {{ $periodo != 'personalizado' ? 'disabled' : '' }}>
                 </div>
             </div>
         </div>
