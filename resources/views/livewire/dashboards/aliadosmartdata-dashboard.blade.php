@@ -20,19 +20,19 @@
     {{-- 1. STATS CARDS --}}
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white h-100">
-                <h6 class="text-muted small fw-bold text-uppercase mb-2">
+            <div class="card border-0 shadow-sm rounded-4 p-2 text-center bg-white h-100">
+                <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">
                     <i class="bi bi-broadcast text-primary me-1"></i> Routers Online
                 </h6>
-                <h2 class="fw-bold mb-0 {{ $stats['routers_online'] > 0 ? 'text-success' : 'text-danger' }}">
-                    {{ $stats['routers_online'] }} <span class="text-muted fs-5">/ {{ $stats['total_routers'] }}</span>
-                </h2>
+                <h3 class="fw-bold mb-0 {{ $stats['routers_online'] > 0 ? 'text-success' : 'text-danger' }}">
+                    {{ $stats['routers_online'] }} <span class="text-muted fs-6">/ {{ $stats['total_routers'] }}</span>
+                </h3>
             </div>
         </div>
         <div class="col-md-4"> 
-            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white h-100">
-                <h6 class="text-muted small fw-bold text-uppercase mb-2" style="font-size: .65rem;">Suscripciones / Planes</h6>
-                <div class="mb-2" style="max-height: 120px; overflow-y: auto;">
+            <div class="card border-0 shadow-sm rounded-4 p-2 text-center bg-white h-100 d-flex flex-column">
+                <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">Suscripciones / Planes</h6>
+                <div class="mb-1" style="max-height: 50px; overflow-y: auto;">
                     @forelse($userPackages as $pkg)
                         <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded-3 mb-1 border-start border-4 {{ $pkg->pivot->status === 'active' ? 'border-success' : ($pkg->pivot->status === 'pending' ? 'border-warning' : 'border-secondary') }} text-start">
                             <span class="fw-bold small text-truncate" style="max-width: 140px;" title="{{ $pkg->name }}">
@@ -62,23 +62,23 @@
                     @endforelse
                 </div>
                 @if($userPackages->where('pivot.allowed_routers', '<', 2)->isEmpty())
-                <button wire:click="openModal" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold mt-auto">
+                <button wire:click="openModal" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold mt-auto" style="font-size: .7rem;">
                     <i class="bi bi-plus-circle me-1"></i> GESTIONAR
                 </button>
                 @endif
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white h-100">
-                <h6 class="text-muted small fw-bold text-uppercase mb-2">Usuarios Online</h6>
-                <h2 class="fw-bold mb-0 text-info">{{ $stats['usuarios_online'] }}</h2>
+            <div class="card border-0 shadow-sm rounded-4 p-2 text-center bg-white h-100">
+                <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">Usuarios Online</h6>
+                <h3 class="fw-bold mb-0 text-info">{{ $stats['usuarios_online'] }}</h3>
             </div>
         </div>
     </div>
 
     {{-- 2. FILTROS DINÁMICOS --}}
     <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-2">
+        <div class="card-body p-1 px-2">
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Equipo / Router</label>
