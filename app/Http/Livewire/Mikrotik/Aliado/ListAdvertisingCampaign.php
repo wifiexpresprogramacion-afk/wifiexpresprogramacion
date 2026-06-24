@@ -272,7 +272,7 @@ class ListAdvertisingCampaign extends Component
                 $userData['cellphone'] = $request->input('cellphone');
             }
 
-            $userMikrotik = UserMikrotik::updateOrCreate(['name' => $mac, 'router_id' => $router->id], $userData);
+            $userMikrotik = UserMikrotik::updateOrCreate(['name' => $username, 'router_id' => $router->id], $userData);
 
             // 2. Gestionar Respuesta de Campaña si aplica
             if ($isCampaign) {
