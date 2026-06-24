@@ -169,11 +169,11 @@
     <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5); z-index: 1050; backdrop-filter: blur(4px);">
         <div class="modal-dialog modal-lg" style="margin-top: 6rem; margin-bottom: 5rem;">
             <div class="modal-content shadow-lg border-0 rounded-4">
-                <div class="modal-header bg-dark text-white p-4">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-cpu-fill me-2"></i>DATOS TÉCNICOS DEL NODO</h5>
+                <div class="modal-header bg-dark text-white p-3 px-4">
+                    <h6 class="modal-title fw-bold"><i class="bi bi-cpu-fill me-2"></i>Datos del Nodo</h6>
                     <div class="d-flex align-items-center gap-3 ms-auto">
                         @if($router_id)
-                            <a href="{{ route('mikrotik.hotspot.config', $router_id) }}" class="btn btn-outline-info btn-sm rounded-pill px-3 fw-bold">
+                            <a href="{{ route('mikrotik.hotspot.config', $router_id) }}" class="btn btn-outline-info btn-sm rounded-pill px-3 fw-bold d-none d-md-inline-flex align-items-center">
                                 <i class="bi bi-broadcast me-1"></i> CONFIG. HOTSPOT
                             </a>
                         @endif

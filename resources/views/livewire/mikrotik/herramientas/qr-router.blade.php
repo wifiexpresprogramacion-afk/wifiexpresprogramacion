@@ -10,7 +10,7 @@
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden d-print-none">
                 <div class="card-header bg-primary text-white p-4">
                     <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-qr-code-scan me-2"></i> Generador de Acceso WiFi
+                        <i class="bi bi-qr-code-scan me-2"></i> Generador de QR WiFi
                     </h5>
                 </div>
                 
@@ -29,7 +29,7 @@
                         @endif
 
                         <div class="col-12">
-                            <label class="form-label fw-bold small text-muted text-uppercase">Router MikroTik</label>
+                            <label class="form-label fw-bold small text-muted text-uppercase">Router</label>
                             <select wire:model="router_id" class="form-select border-0 bg-light rounded-3 shadow-sm py-2" {{ !$selectedAliado ? 'disabled' : '' }}>
                                 <option value="">Seleccione Router...</option>
                                 @foreach($routers as $r)
