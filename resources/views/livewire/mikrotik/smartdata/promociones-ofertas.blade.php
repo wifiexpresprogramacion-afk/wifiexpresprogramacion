@@ -201,7 +201,6 @@
                                 <i class="bi bi-info-circle me-1"></i>Estas reglas determinan si la promoción aparece automáticamente en el portal cautivo.
                             </small>
                         </div>
-                        @endif
                     </div>
                 </div>
 
