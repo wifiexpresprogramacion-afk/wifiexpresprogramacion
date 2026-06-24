@@ -120,7 +120,7 @@ class ListAdvertisingCampaign extends Component
     {
         $campaign = AdvertisingCampaign::findOrFail($id);
         if ($campaign->media_path) {
-            Storage::disk('public')->delete($campaign->media_path);
+            Storage::disk('campaign')->delete($campaign->media_path);
         }
         $campaign->delete();
         session()->flash('message', 'Campaña eliminada correctamente.');
@@ -153,10 +153,10 @@ class ListAdvertisingCampaign extends Component
 
         if ($this->media) {
             if ($this->selected_id && $this->current_media_path) {
-                Storage::disk('public')->delete($this->current_media_path);
+                Storage::disk('campaign')->delete($this->current_media_path);
             }
             $originalName = $this->media->getClientOriginalName();
-            $path = $this->media->storeAs('campaign', $originalName, 'public');
+            $path = $this->media->storeAs('campaign', $originalName, 'campaign');
             $data['media_path'] = $path;
         }
 
