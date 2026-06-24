@@ -113,7 +113,7 @@
                 
                 <div class="modal-body p-4">
                     <div class="row g-3">
-
+                        
                         {{-- Selector de Routers --}}
                         <div class="col-md-12">
                             <label class="form-label small fw-bold text-muted">Router de la Promoción</label>
@@ -126,14 +126,9 @@
                             @error('router_identity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <label class="form-label small fw-bold text-muted">Nombre</label>
                             <input type="text" wire:model="name" class="form-control" placeholder="Ej: Promo Verano">
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label small fw-bold text-muted">Descripción (Opcional)</label>
-                            <textarea wire:model="description" class="form-control" rows="2" placeholder="Detalles de la promoción..."></textarea>
                         </div>
 
                         <div class="col-md-4">
@@ -144,7 +139,7 @@
                                 <option value="femenino">Femenino</option>
                             </select>
                         </div>
-
+                        
                         <div class="col-md-4">
                             <label class="form-label small fw-bold text-muted">Rango de Edad</label>
                             <select wire:model="age_range_id" class="form-select">

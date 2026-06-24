@@ -101,6 +101,17 @@ class PromocionesOfertas extends Component
         $this->isModalOpen = true;
     }
 
+    public function addOption()
+    {
+        $this->options[] = '';
+    }
+
+    public function removeOption($index)
+    {
+        unset($this->options[$index]);
+        $this->options = array_values($this->options);
+    }
+
     public function delete($id)
     {
         $campaign = AdvertisingCampaign::findOrFail($id);
@@ -118,13 +129,9 @@ class PromocionesOfertas extends Component
             'router_identity' => 'required', // El router es obligatorio
             'age_range_id' => 'required', // El rango de edad es obligatorio
             'media' => $this->selected_id ? 'nullable|max:20480' : 'required|max:20480',
+            'question_text' => 'required',
+            'options' => $this->question_type != 'simple' ? 'required|array|min:2' : 'nullable',
         ]);
-
-        // Guardar las reglas de envío en el campo 'options'
-        $optionsData = [
-            'on_connect' => $this->on_connect,
-            'only_new' => $this->only_new,
-        ];
 
         $data = [
             'name' => $this->name,
@@ -136,7 +143,7 @@ class PromocionesOfertas extends Component
             'media_type' => $this->media_type,
             'question_text' => $this->question_text,
             'question_type' => $this->question_type,
-            'options' => $optionsData,
+            'options' => $this->question_type != 'simple' ? $this->options : null,
         ];
 
         if ($this->media) {
