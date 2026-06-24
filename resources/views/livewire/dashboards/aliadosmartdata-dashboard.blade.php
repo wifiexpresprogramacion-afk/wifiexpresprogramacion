@@ -9,11 +9,11 @@
     {{-- HEADER --}}
     <div class="row mb-4 align-items-center">
         <div class="col-md-6">
-            {{-- <h2 class="fw-bold text-dark mb-0"></h2> --}}
+            <h2 class="fw-bold text-dark mb-0"></h2>
             
         </div>
         <div class="col-md-6 text-end">
-            {{-- Este espacio puede ser usado para botones o información adicional en el futuro --}}
+            
         </div>
     </div>
 
@@ -169,7 +169,7 @@
                 <div class="card-header bg-white border-0 pt-3">
                     <h6 class="fw-bold mb-0">Actividad Reciente</h6>
                 </div>
-                <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;" wire:poll.15s>
+                <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
                     @foreach($ultimosLogs as $log)
                         <div class="list-group-item border-0 px-4 py-3 small d-flex justify-content-between align-items-center border-bottom">
                             <div>
@@ -192,9 +192,7 @@
                                 </span>
                             </div>
                         </div>
-                    @empty
-                        <div class="list-group-item border-0 px-4 py-3 text-center text-muted small">No hay actividad reciente.</div>
-                    @endforelse
+                    @endforeach
                 </div>
             </div>
         </div>
