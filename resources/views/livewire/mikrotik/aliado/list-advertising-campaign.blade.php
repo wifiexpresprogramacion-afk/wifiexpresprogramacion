@@ -181,11 +181,7 @@
                                         <div class="small text-primary">Video: {{ $media->getClientOriginalName() }}</div>
                                     @endif
                                 @elseif($selected_id && $current_media_path) 
-                                    hola
-                                    <img src="{{ asset('https://wifiexpres.com/storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
-                              
                                     @if($media_type == 'imagen')
-                                        como estas
                                         <img src="{{ asset('https://wifiexpres.com/storage/' . $current_media_path) }}" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
                                     @endif
                                     
