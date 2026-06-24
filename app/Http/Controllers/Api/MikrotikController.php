@@ -93,11 +93,14 @@ class MikrotikController extends Controller
             } 
             
             if ($type === 'logout') {
-                $log = TicketLog::where('username', $username)
-                    ->where('router_id', $routerId)
-                    ->whereNull('disconnected_at')
-                    ->latest()
-                    ->first();
+                $log = TicketLog::where(function ($query) use ($username) {
+                    $query->where('username', $username)
+                        ->orWhere('username', 'T-'.$username); 
+                })
+                ->where('router_id', $routerId)
+                ->whereNull('disconnected_at')
+                ->latest()
+                ->first();
 
                 if ($log) {
                     $disconnectedAt = now();
@@ -175,7 +178,7 @@ class MikrotikController extends Controller
             } 
             
             if ($type === 'logout') {
-                $log = TicketLog::where(function ($query) use ($username, $mac) {
+                $log = TicketLog::where(function ($query) use ($username) {
                     $query->where('username', $username)
                         ->orWhere('username', 'T-'.$username); 
                 })
