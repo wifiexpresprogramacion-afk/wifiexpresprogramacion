@@ -16,7 +16,7 @@ use Carbon\Carbon;
 class AliadosmartdataDashboard extends Component
 {
     public $showPlanModal = false;
-    public $periodo = 'dia'; 
+    public $periodo = 'semana'; 
     public $fecha_desde, $fecha_hasta;
     public $router_id = ''; 
 
