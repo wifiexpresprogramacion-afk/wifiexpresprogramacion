@@ -152,9 +152,9 @@
                     </div>
                 </div>
                 <div class="card-footer bg-white border-top p-4 text-end">
-                    <button wire:click="save" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow hover-lift" wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="save">
-                            <i class="bi bi-save me-1"></i> GUARDAR Y SINCRONIZAR
+                    <button wire:click="save" class="btn btn-primary rounded-pill px-4 px-md-5 py-2 fw-bold shadow hover-lift" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="save" class="d-inline-flex align-items-center">
+                            <i class="bi bi-save"></i><span class="d-none d-md-inline ms-2">GUARDAR Y SINCRONIZAR</span>
                         </span>
                         <span wire:loading wire:target="save">
                             <span class="spinner-border spinner-border-sm me-2"></span> SINCRONIZANDO...
