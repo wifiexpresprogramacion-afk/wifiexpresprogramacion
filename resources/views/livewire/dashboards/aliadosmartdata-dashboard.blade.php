@@ -10,11 +10,7 @@
     <div class="row mb-4 align-items-center">
         <div class="col-md-6">
             <h2 class="fw-bold text-dark mb-0"></h2>
-            <div class="d-flex align-items-center gap-2 mt-1">
-                <span class="badge bg-primary-soft text-primary border border-primary rounded-pill px-3">
-                    <i class="bi bi-currency-exchange me-1"></i> BCV: <strong>Bs. {{ number_format($dollarRate, 2, ',', '.') }}</strong>
-                </span>
-            </div>
+            
         </div>
         <div class="col-md-6 text-end">
             
@@ -24,8 +20,8 @@
     {{-- 1. STATS CARDS --}}
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <h6 class="text-muted small fw-bold text-uppercase mb-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white h-100">
+                <h6 class="text-muted small fw-bold text-uppercase mb-2">
                     <i class="bi bi-broadcast text-primary me-1"></i> Routers Online
                 </h6>
                 <h2 class="fw-bold mb-0 {{ $stats['routers_online'] > 0 ? 'text-success' : 'text-danger' }}">
@@ -33,9 +29,9 @@
                 </h2>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <h6 class="text-muted small fw-bold text-uppercase mb-2">Suscripciones / Planes</h6>
+        <div class="col-md-4"> 
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white h-100">
+                <h6 class="text-muted small fw-bold text-uppercase mb-2" style="font-size: .65rem;">Suscripciones / Planes</h6>
                 <div class="mb-2" style="max-height: 120px; overflow-y: auto;">
                     @forelse($userPackages as $pkg)
                         <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded-3 mb-1 border-start border-4 {{ $pkg->pivot->status === 'active' ? 'border-success' : ($pkg->pivot->status === 'pending' ? 'border-warning' : 'border-secondary') }} text-start">
@@ -73,8 +69,8 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white h-100">
-                <h6 class="text-muted small fw-bold text-uppercase">Usuarios Online</h6>
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white h-100">
+                <h6 class="text-muted small fw-bold text-uppercase mb-2">Usuarios Online</h6>
                 <h2 class="fw-bold mb-0 text-info">{{ $stats['usuarios_online'] }}</h2>
             </div>
         </div>
@@ -82,10 +78,10 @@
 
     {{-- 2. FILTROS DINÁMICOS --}}
     <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-3">
+        <div class="card-body p-2">
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
-                    <label class="small fw-bold text-muted mb-1 text-uppercase">Equipo / Router</label>
+                    <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Equipo / Router</label>
                     <select wire:model="router_id" class="form-select border-0 bg-light rounded-3 shadow-none">
                         @if(count($routers) > 1)
                             <option value="">📊 Todos los Routers</option>
@@ -98,7 +94,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="small fw-bold text-muted mb-1 text-uppercase">Rango</label>
+                    <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Rango</label>
                     <select wire:model="periodo" class="form-select border-0 bg-light rounded-3 shadow-none">
                         <option value="dia">Hoy</option>
                         <option value="semana">Semana</option>
@@ -106,12 +102,12 @@
                         <option value="personalizado">Personalizado</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="small fw-bold text-muted mb-1 text-uppercase">Desde</label>
+                <div class="col">
+                    <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Desde</label>
                     <input type="date" wire:model="fecha_desde" class="form-control border-0 bg-light rounded-3 shadow-none" {{ $periodo != 'personalizado' ? 'disabled' : '' }}>
                 </div>
-                <div class="col-md-3">
-                    <label class="small fw-bold text-muted mb-1 text-uppercase">Hasta</label>
+                <div class="col">
+                    <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Hasta</label>
                     <input type="date" wire:model="fecha_hasta" class="form-control border-0 bg-light rounded-3 shadow-none" {{ $periodo != 'personalizado' ? 'disabled' : '' }}>
                 </div>
             </div>
@@ -159,7 +155,7 @@
                         </div>
                     </div>
                     <span class="badge bg-primary-soft text-primary border border-primary rounded-pill small">
-                        {{ round($u->tiempo_total/3600, 1) }}h
+                        {{ round($u->tiempo_total/60, 0) }} min
                     </span>
                 </div>
                 @endforeach

@@ -22,8 +22,7 @@ class AliadosmartdataDashboard extends Component
 
     public function mount()
     {
-        $this->fecha_desde = now()->format('Y-m-d');
-        $this->fecha_hasta = now()->format('Y-m-d');
+        $this->updatedPeriodo($this->periodo);
 
         $user = Auth::user();
         $misRouters = Router::where('user_id', $user->id)->get();
@@ -54,6 +53,7 @@ class AliadosmartdataDashboard extends Component
         } elseif ($value === 'mes') {
             $this->fecha_desde = now()->subMonth()->format('Y-m-d');
         }
+        if ($value !== 'personalizado')
         $this->fecha_hasta = now()->format('Y-m-d');
     }
 
@@ -209,7 +209,6 @@ class AliadosmartdataDashboard extends Component
                 )
                 ->latest('ticket_logs.created_at')
                 ->take(10)->get(),
-            'dollarRate' => ExchangeRateService::getBcvRate(),
             'labels' => $labels,
             'datasets' => $datasets
         ])->layout('layouts.app');
