@@ -23,12 +23,14 @@
                     <p class="text-muted small mb-0">Gestión de mis Routers y Nodos</p>
                 </div>
                 <div class="col-md-8 text-end">
-                    <span class="badge {{ $connectionMode === 1 ? 'bg-info' : 'bg-dark' }} rounded-pill px-3 py-2 me-2">
+                    {{-- Etiqueta de modo de conexión ocultada por solicitud --}}
+                    {{-- <span class="badge {{ $connectionMode === 1 ? 'bg-info' : 'bg-dark' }} rounded-pill px-3 py-2 me-2">
                         <i class="bi bi-hdd-network-fill me-1"></i> MODO: {{ $connectionMode === 1 ? 'REMOTO (DNS)' : 'LOCAL (IP)' }}
-                    </span>
+                    </span> --}}
                     <button wire:click="refreshStatus" wire:loading.attr="disabled" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm me-2">
                         <span wire:loading wire:target="refreshStatus" class="spinner-border spinner-border-sm me-1"></span>
-                        <i wire:loading.remove wire:target="refreshStatus" class="bi bi-arrow-clockwise me-1"></i> REFRESCAR ESTADOS
+                        <i wire:loading.remove wire:target="refreshStatus" class="bi bi-arrow-clockwise"></i> 
+                        <span class="d-none d-md-inline ms-1">REFRESCAR ESTADOS</span>
                     </button>
                     @if($routers->count() < $packages->sum('pivot.allowed_routers'))
                         <button wire:click="create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
