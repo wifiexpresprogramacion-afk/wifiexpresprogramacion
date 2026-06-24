@@ -301,13 +301,6 @@ class ListAdvertisingCampaign extends Component
                 }
             }
 
-            // TicketLog::create([
-            //         'router_id'   => $router->id,
-            //         'username'    => 'T-' . $username,
-            //         'mac_address' => $mac,
-            //         'created_at'  => now(),
-            //     ]);
-
             return response()->json(['success' => true]);
 
         } catch (Exception $e) {
