@@ -35,17 +35,6 @@
                         <input type="text" wire:model="search" class="form-control border-start-0" placeholder="Buscar promoción...">
                     </div>
                 </div>
-                
-                @if($isAdmin)
-                <div class="col-md-3">
-                    <select wire:model="filterAliado" class="form-select">
-                        <option value="">Todos los Aliados</option>
-                        @foreach($aliados as $aliado)
-                            <option value="{{ $aliado->id }}">{{ $aliado->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @endif
             </div>
         </div>
     </div>
@@ -56,10 +45,9 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light text-muted small fw-bold text-uppercase">
                     <tr>
-                        <th class="px-4 py-3">Campaña / Promoción</th>
+                        <th class="px-4 py-3">Promoción</th>
                         <th class="py-3">Segmentación</th>
                         <th class="py-3 text-center">Reglas Envío</th>
-                        <th class="py-3 text-center">Alcance</th>
                         <th class="py-3 text-center">Estado</th>
                         <th class="text-end px-4">Acciones</th>
                     </tr>
@@ -69,7 +57,6 @@
                     <tr wire:key="camp-row-{{ $camp->id }}">
                         <td class="px-4">
                             <span class="fw-bold d-block text-dark">{{ $camp->name }}</span>
-                            @if($isAdmin) <small class="text-primary fw-semibold">{{ $camp->user->name }}</small> @endif
                         </td>
                         <td>
                             <span class="badge bg-soft-info text-info rounded-pill px-3">
@@ -82,9 +69,6 @@
                             @if($opts['only_new'] ?? false) <span class="badge bg-light text-primary border small">NUEVOS</span> @endif
                         </td>
                         <td class="text-center">
-                            <span class="fw-bold" title="Envíos realizados"><i class="bi bi-send-check me-1"></i>{{ $camp->alcance ?? 0 }}</span>
-                        </td>
-                        <td class="text-center">
                             <div class="form-check form-switch d-inline-block">
                                 {{-- SWITCH CORREGIDO --}}
                                 <input class="form-check-input" type="checkbox" role="switch" 
@@ -94,10 +78,6 @@
                         </td>
                         <td class="text-end px-4">
                             <div class="btn-group shadow-sm rounded-3">
-                                <button wire:click="selectCampaignForSending({{ $camp->id }})" 
-                                        class="btn btn-sm btn-white border {{ $camp->manualSending ? 'bg-primary text-white' : '' }}" title="Seleccionar para envío manual">
-                                    <i class="bi bi-send"></i>
-                                </button>
                                 <button wire:click="edit({{ $camp->id }})" class="btn btn-sm btn-white border">
                                     <i class="bi bi-pencil text-primary"></i>
                                 </button>
@@ -110,7 +90,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="text-center py-5 text-muted">No se encontraron concursos.</td></tr>
+                    <tr><td colspan="5" class="text-center py-5 text-muted">No se encontraron promociones.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -119,89 +99,6 @@
             {{ $campaigns->links() }}
         </div>
     </div>
-
-    {{-- SECCIÓN DE ENVÍO MANUAL A USUARIOS --}}
-    @if($selectedCampaignForSending)
-    <div class="card border-0 shadow-sm rounded-4 mt-4 animate__animated animate__fadeIn">
-        <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">
-                    <i class="bi bi-people text-info me-2"></i>Usuarios del Router: <span class="text-primary">{{ $selectedCampaignForSending->router_identity }}</span>
-                </h5>
-                <div class="d-flex align-items-center">
-                    <select wire:model="deliveryMethod" class="form-select form-select-sm rounded-pill me-2" style="width: auto; min-width: 180px;">
-                        <option value="">Medio de envío...</option>
-                        <option value="sms">SMS Masivo</option>
-                        <option value="whatsapp">WhatsApp Directo</option>
-                        <option value="email">Correo Electrónico</option>
-                    </select>
-
-                    <button wire:click="sendPromotions" 
-                        class="btn btn-success rounded-pill px-4 shadow-sm me-2" 
-                        {{ empty($selectedUsers) || !$deliveryMethod ? 'disabled' : '' }}>
-                        <i class="bi bi-send-check me-1"></i> Enviar Promoción
-                    </button>
-                    <button wire:click="closeUserSelection" class="btn btn-light btn-sm rounded-circle" title="Cerrar selección"><i class="bi bi-x-lg"></i></button>
-                </div>
-            </div>
-
-            {{-- TEXTAREA DINÁMICO PARA SMS --}}
-            @if($deliveryMethod === 'sms')
-            <div class="mb-4 animate__animated animate__fadeIn">
-                <label class="form-label small fw-bold text-muted">Contenido del Mensaje SMS</label>
-                <textarea wire:model="smsMessage" class="form-control rounded-4 border-0 shadow-sm" rows="3" placeholder="Escribe el mensaje promocional aquí..."></textarea>
-                <div class="form-text text-end small text-muted"><i class="bi bi-info-circle me-1"></i>Este texto será el que reciban los clientes en sus dispositivos.</div>
-            </div>
-            @endif
-
-            {{-- Checkbox de Selección Masiva --}}
-            <div class="mb-3 p-3 bg-light rounded-4 border-start border-4 border-info d-flex align-items-center">
-                <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" id="selectAllWithPhone" wire:model="selectAll" style="width: 1.25em; height: 1.25em; cursor: pointer;">
-                    <label class="form-check-label fw-bold text-dark ms-2" for="selectAllWithPhone" style="cursor: pointer;">
-                        Seleccionar todos los usuarios con número de teléfono
-                    </label>
-                </div>
-                <small class="text-muted ms-auto"><i class="bi bi-info-circle me-1"></i>Esto filtrará automáticamente a los clientes sin contacto telefónico registrado.</small>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light text-muted small fw-bold text-uppercase">
-                        <tr>
-                            <th width="40" class="px-4"></th>
-                            <th>Usuario</th>
-                            <th>Contacto</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($usersToNotify as $user)
-                        <tr wire:key="user-notify-row-{{ $user->id }}">
-                            <td class="px-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}" wire:model="selectedUsers">
-                                </div>
-                            </td>
-                            <td>
-                                <span class="fw-bold d-block">{{ $user->full_name ?? $user->name }}</span>
-                                <small class="text-muted font-monospace">{{ $user->name }}</small>
-                            </td>
-                            <td>
-                                <div class="small">
-                                    <i class="bi bi-phone me-1"></i>{{ $user->cellphonecode }}{{ $user->cellphone }}<br>
-                                    <i class="bi bi-envelope me-1"></i>{{ $user->email ?? 'N/A' }}
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr><td colspan="6" class="text-center py-4 text-muted">No se encontraron usuarios vinculados a este router.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    @endif
 
     {{-- MODAL DINÁMICO --}}
     @if($isModalOpen)
@@ -216,17 +113,6 @@
                 
                 <div class="modal-body p-4">
                     <div class="row g-3">
-                        @if($isAdmin)
-                        <div class="col-md-12">
-                            <label class="form-label small fw-bold text-muted">Aliado</label>
-                            <select wire:model="user_id" class="form-select @error('user_id') is-invalid @enderror">
-                                <option value="">Seleccionar...</option>
-                                @foreach($aliados as $aliado)
-                                    <option value="{{ $aliado->id }}">{{ $aliado->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @endif
 
                         {{-- Selector de Routers --}}
                         <div class="col-md-12">
@@ -240,9 +126,14 @@
                             @error('router_identity') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <label class="form-label small fw-bold text-muted">Nombre</label>
                             <input type="text" wire:model="name" class="form-control" placeholder="Ej: Promo Verano">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-muted">Descripción (Opcional)</label>
+                            <textarea wire:model="description" class="form-control" rows="2" placeholder="Detalles de la promoción..."></textarea>
                         </div>
 
                         <div class="col-md-4">
@@ -290,39 +181,25 @@
                             </div>
                         </div>
 
-                        <div class="col-md-8">
-                            <label class="form-label small fw-bold text-muted">Pregunta de Encuesta</label>
-                            <input type="text" wire:model="question_text" class="form-control" placeholder="¿Qué te parece nuestro servicio?">
-                        </div>
+                        <hr class="my-3">
 
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold text-muted">Tipo de Respuesta</label>
-                            <select wire:model="question_type" class="form-select">
-                                <option value="simple">Respuesta Abierta</option>
-                                <option value="single_choice">Opción Única (Radio)</option>
-                                <option value="multiple_choice">Múltiples Opciones (Check)</option>
-                            </select>
-                        </div>
-
-                        {{-- GESTIÓN DE OPCIONES --}}
-                        @if($question_type != 'simple')
                         <div class="col-12">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label small fw-bold text-primary mb-0">Opciones de Respuesta</label>
-                                <button type="button" wire:click="addOption" class="btn btn-sm btn-outline-primary rounded-pill">
-                                    <i class="bi bi-plus"></i> Agregar Opción
-                                </button>
+                            <h6 class="fw-bold text-primary">Reglas de Envío Automático</h6>
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" wire:model="on_connect" id="on_connect_check">
+                                <label class="form-check-label" for="on_connect_check">
+                                    Mostrar al conectar al WiFi
+                                </label>
                             </div>
-                            @foreach($options as $index => $option)
-                            <div class="input-group mb-2">
-                                <span class="input-group-text">{{ $index + 1 }}</span>
-                                <input type="text" wire:model.defer="options.{{ $index }}" class="form-control" placeholder="Texto de la opción">
-                                <button type="button" wire:click="removeOption({{ $index }})" class="btn btn-outline-danger">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" wire:model="only_new" id="only_new_check">
+                                <label class="form-check-label" for="only_new_check">
+                                    Mostrar solo a clientes nuevos
+                                </label>
                             </div>
-                            @endforeach
-                            @error('options') <small class="text-danger">{{ $message }}</small> @enderror
+                            <small class="text-muted d-block mt-2">
+                                <i class="bi bi-info-circle me-1"></i>Estas reglas determinan si la promoción aparece automáticamente en el portal cautivo.
+                            </small>
                         </div>
                         @endif
                     </div>
@@ -331,7 +208,7 @@
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button wire:click="closeModal" class="btn btn-light rounded-pill px-4">Cerrar</button>
                     <button wire:click="save" class="btn btn-primary rounded-pill px-5 shadow-sm fw-bold">
-                        {{ $selected_id ? 'Guardar Cambios' : 'Crear Campaña' }}
+                        {{ $selected_id ? 'Guardar Cambios' : 'Crear Promoción' }}
                     </button>
                 </div>
             </div>
