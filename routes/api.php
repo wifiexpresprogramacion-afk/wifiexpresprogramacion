@@ -83,6 +83,7 @@ Route::apiResource('processpayment', ApiProcessPaymentController::class);
 Route::post('/capturarPagomovil', [ListPagomovil::class, 'capturarPagomovil']);
 Route::get('/accesoMikrotik', [LoginMikrotik::class, 'accesoMikrotik']);
 Route::get('/log-connection', [MikrotikController::class, 'logConnection']);
+Route::get('/log-connection-smartdata', [MikrotikController::class, 'logConnectionSmartData']);
 
 /** * RUTAS V1 - MANTENIDAS POR COMPATIBILIDAD
  */
