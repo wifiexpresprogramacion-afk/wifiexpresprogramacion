@@ -317,6 +317,15 @@
                 <div class="modal-footer bg-light border-0 p-4">
                     <button wire:click="closeModal" class="btn btn-secondary rounded-pill px-4">Cancelar</button>
                     <button wire:click.prevent="store" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">GUARDAR CAMBIOS</button>
+                <div class="modal-footer bg-light border-0 p-3">
+                    <div class="row w-100 justify-content-end g-2">
+                        <div class="col-6 col-md-auto">
+                            <button wire:click="closeModal" class="btn btn-secondary rounded-pill w-100">Cancelar</button>
+                        </div>
+                        <div class="col-6 col-md-auto">
+                            <button wire:click.prevent="store" class="btn btn-primary rounded-pill shadow-sm fw-bold w-100">GUARDAR</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
