@@ -49,6 +49,7 @@
                         <th class="py-3">Segmentación</th>
                         <th class="py-3 text-center">Reglas Envío</th>
                         <th class="py-3 text-center">Estado</th>
+                        <th class="py-3 text-center">Clientes</th>
                         <th class="text-end px-4">Acciones</th>
                     </tr>
                 </thead>
@@ -75,6 +76,11 @@
                                     style="cursor: pointer;">
                             </div>
                         </td>
+                        <td class="text-center">
+                            <button wire:click="showUsers({{ $camp->id }})" class="btn btn-sm btn-outline-secondary border-0 rounded-circle" title="Ver Clientes Potenciales">
+                                <i class="bi bi-people-fill"></i>
+                            </button>
+                        </td>
                         <td class="text-end px-4">
                             <div class="btn-group shadow-sm rounded-3">
                                 <button wire:click="edit({{ $camp->id }})" class="btn btn-sm btn-white border">
@@ -89,7 +95,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="text-center py-5 text-muted">No se encontraron promociones.</td></tr>
+                    <tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron promociones.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -98,6 +104,82 @@
             {{ $campaigns->links() }}
         </div>
     </div>
+
+    {{-- SECCIÓN PARA MOSTRAR USUARIOS DE LA CAMPAÑA --}}
+    @if($selectedCampaignForUsers)
+    <div class="card border-0 shadow-sm rounded-4 mt-5" id="user-list-section">
+        <div class="card-header bg-light border-0 p-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold mb-1">
+                    <i class="bi bi-person-check-fill text-primary me-2"></i>Clientes para la campaña: "{{ $selectedCampaignForUsers->name }}"
+                </h5>
+                <p class="text-muted small mb-0">
+                    Segmentación: 
+                    <span class="badge bg-soft-info text-info rounded-pill px-2">
+                        {{ strtoupper($selectedCampaignForUsers->target_gender) }}
+                    </span>
+                    <span class="badge bg-soft-info text-info rounded-pill px-2">
+                        {{ $selectedCampaignForUsers->ageRange->name ?? 'Cualquier edad' }}
+                    </span>
+                    <span class="badge bg-secondary rounded-pill px-2">
+                        <i class="bi bi-router me-1"></i>{{ $selectedCampaignForUsers->router_identity }}
+                    </span>
+                </p>
+            </div>
+            <button wire:click="closeUserList" class="btn-close"></button>
+        </div>
+        <div class="card-body p-0">
+            <div class="p-4 d-flex justify-content-between align-items-center border-bottom">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" wire:model="selectAll" id="selectAllCheckbox">
+                    <label class="form-check-label fw-bold" for="selectAllCheckbox">
+                        Seleccionar Todos ({{ count($usersForCampaign) }} encontrados)
+                    </label>
+                </div>
+                <button wire:click="sendPromotion" class="btn btn-success rounded-pill px-4" {{ empty($selectedUsers) ? 'disabled' : '' }}>
+                    <i class="bi bi-send me-2"></i> Enviar Promoción a {{ count($selectedUsers) }} Seleccionados
+                </button>
+            </div>
+
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted small fw-bold text-uppercase" style="position: sticky; top: 0; z-index: 1;">
+                        <tr>
+                            <th class="px-4 py-3" width="50"></th>
+                            <th class="py-3">Nombre</th>
+                            <th class="py-3">Teléfono</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Género</th>
+                            <th class="py-3 text-center">Edad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($usersForCampaign as $user)
+                        <tr wire:key="user-for-campaign-{{ $user->id }}">
+                            <td class="px-4">
+                                <input class="form-check-input" type="checkbox" wire:model="selectedUsers" value="{{ $user->id }}">
+                            </td>
+                            <td><span class="fw-bold text-dark">{{ $user->full_name ?? $user->name }}</span></td>
+                            <td>{{ $user->cellphonecode }}{{ $user->cellphone }}</td>
+                            <td>{{ $user->email ?? 'N/A' }}</td>
+                            <td>
+                                <span class="text-capitalize">{{ $user->gender ?? 'N/D' }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark">{{ $user->age ?? 'N/D' }}</span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">No se encontraron clientes que coincidan con la segmentación de esta campaña.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @endif
 
     {{-- MODAL DINÁMICO --}}
     @if($isModalOpen)

@@ -9,6 +9,7 @@ use App\Models\AdvertisingCampaign;
 use App\Models\Router;
 use App\Models\UserMikrotik;
 use App\Models\CampaignResponse;
+use App\Models\PromocionesUser;
 use App\Models\AgeRange;
 use App\Models\User;
 use Exception;
@@ -29,6 +30,12 @@ class PromocionesOfertas extends Component
     public $media_type = 'imagen', $media, $current_media_path;
     public $question_text, $question_type = 'simple';
     public $options = []; // Array para las opciones dinámicas
+
+    // Propiedades para la lista de usuarios
+    public $selectedCampaignForUsers = null;
+    public $usersForCampaign = [];
+    public $selectedUsers = [];
+    public $selectAll = false;
 
     public $user_id;
 
@@ -138,6 +145,80 @@ class PromocionesOfertas extends Component
 
         session()->flash('message', $this->selected_id ? 'Campaña actualizada.' : 'Campaña creada.');
         $this->closeModal();
+    }
+
+    /**
+     * Muestra la lista de usuarios que coinciden con la segmentación de la campaña.
+     */
+    public function showUsers($campaignId)
+    {
+        $this->closeUserList(); // Resetea antes de mostrar nuevos usuarios
+        $this->selectedCampaignForUsers = AdvertisingCampaign::with('ageRange')->findOrFail($campaignId);
+
+        $router = Router::where('identity', $this->selectedCampaignForUsers->router_identity)->first();
+
+        if (!$router) {
+            session()->flash('error', 'El router asociado a esta campaña no fue encontrado.');
+            $this->selectedCampaignForUsers = null;
+            return;
+        }
+
+        $query = UserMikrotik::where('router_id', $router->id);
+
+        // Filtrar por género
+        if ($this->selectedCampaignForUsers->target_gender !== 'todos') {
+            $query->where('gender', $this->selectedCampaignForUsers->target_gender);
+        }
+
+        // Filtrar por rango de edad
+        if ($this->selectedCampaignForUsers->age_range_id && $this->selectedCampaignForUsers->ageRange) {
+            $min_age = $this->selectedCampaignForUsers->ageRange->min_age;
+            $max_age = $this->selectedCampaignForUsers->ageRange->max_age;
+            $query->whereNotNull('birthday')->whereBetween('birthday', [
+                now()->subYears($max_age + 1)->addDay(),
+                now()->subYears($min_age)
+            ]);
+        }
+
+        $this->usersForCampaign = $query->whereNotNull('cellphone')->get();
+    }
+
+    public function closeUserList()
+    {
+        $this->selectedCampaignForUsers = null;
+        $this->usersForCampaign = [];
+        $this->selectedUsers = [];
+        $this->selectAll = false;
+    }
+
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->selectedUsers = collect($this->usersForCampaign)->pluck('id')->map(fn ($id) => (string) $id)->toArray();
+        } else {
+            $this->selectedUsers = [];
+        }
+    }
+
+    public function sendPromotion()
+    {
+        foreach ($this->selectedUsers as $userId) {
+            $user = UserMikrotik::find($userId);
+            if ($user) {
+                PromocionesUser::create([
+                    'user_id' => $this->selectedCampaignForUsers->user_id,
+                    'campaign_id' => $this->selectedCampaignForUsers->id,
+                    'name' => $user->full_name,
+                    'phone' => $user->cellphonecode . $user->cellphone,
+                    'email' => $user->email,
+                    'deliveryMethod' => 'sms', // o el método que uses
+                    'enviado' => true, // Marcar como enviado
+                ]);
+            }
+        }
+
+        session()->flash('message', 'Se ha registrado el envío de la promoción a ' . count($this->selectedUsers) . ' usuarios.');
+        $this->closeUserList();
     }
 
     public function render()
