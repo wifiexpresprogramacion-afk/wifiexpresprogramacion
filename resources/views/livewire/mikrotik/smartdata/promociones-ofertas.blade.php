@@ -129,6 +129,21 @@
             <button wire:click="closeUserList" class="btn-close"></button>
         </div>
         <div class="card-body p-0">
+            {{-- CAMPO PARA EDITAR EL MENSAJE --}}
+            <div class="p-4 border-bottom">
+                <label for="messageBodyTextarea" class="form-label fw-bold text-muted small">Contenido del Mensaje (SMS / WhatsApp)</label>
+                <textarea wire:model.defer="messageBody" id="messageBodyTextarea" class="form-control" rows="3" placeholder="Escribe aquí el mensaje que se enviará a los clientes seleccionados..."></textarea>
+                <div class="text-end mt-2">
+                    <button wire:click="saveMessage" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        <span wire:loading.remove wire:target="saveMessage">
+                            <i class="bi bi-save me-1"></i> Guardar Mensaje
+                        </span>
+                        <span wire:loading wire:target="saveMessage">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...
+                        </span>
+                    </button>
+                </div>
+            </div>
             <div class="p-4 d-flex justify-content-between align-items-center border-bottom">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" wire:model="selectAll" id="selectAllCheckbox">

@@ -36,6 +36,7 @@ class PromocionesOfertas extends Component
     public $usersForCampaign = [];
     public $selectedUsers = [];
     public $selectAll = false;
+    public $messageBody = '';
 
     public $user_id;
 
@@ -181,6 +182,7 @@ class PromocionesOfertas extends Component
         }
 
         $this->usersForCampaign = $query->whereNotNull('cellphone')->get();
+        $this->messageBody = $this->selectedCampaignForUsers->messagebody ?? '';
     }
 
     public function closeUserList()
@@ -189,6 +191,7 @@ class PromocionesOfertas extends Component
         $this->usersForCampaign = [];
         $this->selectedUsers = [];
         $this->selectAll = false;
+        $this->messageBody = '';
     }
 
     public function updatedSelectAll($value)
@@ -198,6 +201,16 @@ class PromocionesOfertas extends Component
         } else {
             $this->selectedUsers = [];
         }
+    }
+
+    /**
+     * Guarda el cuerpo del mensaje para la campaña seleccionada.
+     */
+    public function saveMessage()
+    {
+        $this->selectedCampaignForUsers->messagebody = $this->messageBody;
+        $this->selectedCampaignForUsers->save();
+        session()->flash('message', 'Cuerpo del mensaje guardado correctamente.');
     }
 
     public function sendPromotion()
