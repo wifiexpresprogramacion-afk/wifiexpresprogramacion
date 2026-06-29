@@ -39,7 +39,8 @@ class WelcomeController extends Controller
 
     public function index(Request $request)
     {
-        return view('welcome');
+        // return view('welcome');
+        return view('portal_nuevo');
     }
 
     
