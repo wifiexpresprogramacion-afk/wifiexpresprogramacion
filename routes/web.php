@@ -26,8 +26,6 @@ use App\Http\Livewire\Mikrotik\Router\ListUsersRouter;
 // NUEVO IMPORT
 use App\Http\Livewire\Mikrotik\Herramientas\RouterAuditor;
 
-
-
 Route::get('/', Welcome::class)->name('welcome');
 // Route::get('/', PortalNuevo::class)->name('portal.nuevo');
 Route::get('/home', [RedirectController::class, 'dashboard'])->middleware('auth');
