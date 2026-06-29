@@ -5,9 +5,6 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>WiFi Express - Portal Premium</title>
-        <!-- Bootstrap 5 & FontAwesome -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <!-- Estilos personalizados -->
         <link rel="stylesheet" href="/css/portal_nuevo.css">
     </head>
@@ -15,62 +12,6 @@
 
         <!-- Imagen de Fondo Fija -->
         <div class="fixed-background"></div>
-
-        <header id="mainNavbar" class="fixed-top transition-all">
-            <!-- Barra Superior (Blanca) -->
-            <div class="navbar-top bg-white py-2">
-                <div class="container d-flex justify-content-between align-items-center">
-                    <a class="navbar-brand m-0" href="#">
-                        <img src="img/logo-wifiexpres.png" alt="Logo" class="navbar-logo">
-                    </a>
-                    <a href="#login" class="login-link text-dark text-decoration-none fw-bold">
-                        <i class="fas fa-user-circle fa-lg me-2"></i>Iniciar Sesión
-                    </a>
-                </div>
-            </div>
-            <!-- Barra Inferior (Menú Naranja) -->
-            <nav class="navbar navbar-expand-lg navbar-dark p-0" style="background-color: #FF572F;">
-                <div class="container">
-                    <button class="navbar-toggler ms-auto my-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navMenu">
-                        <ul class="navbar-nav mx-auto text-center">
-                            <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
-                            <li class="nav-item"><a class="nav-link" href="javascript:void(0)" id="submenuTrigger">Servicios <i class="fas fa-chevron-down small"></i></a></li>
-                            <li class="nav-item"><a class="nav-link" href="#ventajas">Ventajas</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#planes">Planes</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Sección de Submenú (debajo del navbar) -->
-            <div id="submenuPanel" class="submenu-container shadow-lg">
-                <div class="container py-4">
-                    <div class="row text-center">
-                        <div class="col-md-3 submenu-item">
-                            <i class="fas fa-wifi fa-2x mb-2 text-primary"></i>
-                            <h6>Fibra Óptica</h6>
-                        </div>
-                        <div class="col-md-3 submenu-item">
-                            <i class="fas fa-tv fa-2x mb-2 text-primary"></i>
-                            <h6>IPTV HD</h6>
-                        </div>
-                        <div class="col-md-3 submenu-item">
-                            <i class="fas fa-shield-alt fa-2x mb-2 text-primary"></i>
-                            <h6>Seguridad</h6>
-                        </div>
-                        <div class="col-md-3 submenu-item">
-                            <i class="fas fa-tools fa-2x mb-2 text-primary"></i>
-                            <h6>Soporte 24/7</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
 
         <main>
             <section id="inicio" class="section-full d-flex align-items-center main-hero-section pt-5">
