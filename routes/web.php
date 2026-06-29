@@ -13,6 +13,7 @@ use App\Http\Livewire\Dashboards\AliadosmartdataDashboard;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Livewire\Error\ShowError;
 use App\Http\Livewire\Welcome;
+use App\Http\Livewire\PortalNuevo;
 use App\Http\Livewire\Layouts\Components\ListCarrusel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -27,7 +28,8 @@ use App\Http\Livewire\Mikrotik\Herramientas\RouterAuditor;
 
 
 
-Route::get('/', Welcome::class)->name('welcome'); 
+// Route::get('/', Welcome::class)->name('welcome');
+Route::get('/', PortalNuevo::class)->name('portal.nuevo');
 Route::get('/home', [RedirectController::class, 'dashboard'])->middleware('auth');
 Route::get('/listCarrusel', ListCarrusel::class)->name('listCarrusel'); 
 Route::post('/autenticar', [AuthController::class, 'autenticar'])->name('autenticar');
