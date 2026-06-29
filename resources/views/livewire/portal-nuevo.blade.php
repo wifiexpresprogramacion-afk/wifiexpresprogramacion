@@ -215,55 +215,7 @@
             </section>
         </main>
 
-        <footer id="contacto">
-            <div class="footer-top-section">
-                <div class="container">
-                    <div class="row align-items-start text-start">
-                        <div class="col-md-3">
-                            <img src="img/logo-wifiexpres.png" alt="Wifi Express" class="footer-logo-main">
-                        </div>
-                        <div class="col-md-3">
-                            <h6 class="fw-bold text-uppercase">Dirección</h6>
-                            <p class="small">Av. Vollmer - Edif. Normandie - Piso 6 Ofic. 612<br>San Bernardino - Caracas</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h6 class="fw-bold text-uppercase">Horario</h6>
-                            <p class="small">Lun - Vie: 8:00 a.m. - 5:00 p.m.<br>Sáb: 8:00 a.m. - 2:00 p.m.</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h6 class="fw-bold text-uppercase">Correo</h6>
-                            <a href="mailto:ddrsistemas@gmail.com" class="text-decoration-none text-dark small">ddrsistemas@gmail.com</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom-section">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-3 text-start">
-                            <img src="img/logo-ddr.png" alt="DDR Sistemas" class="footer-logo-ddr">
-                        </div>
-                        <div class="col-md-5 text-center">
-                            <p class="mb-0 x-small fw-bold">COPYRIGHT © DDR SISTEMAS C.A. RIF: J-31512955-8<br>V1.0.0.PV2</p>
-                        </div>
-                        <div class="col-md-4 text-end social-icons-footer">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-facebook-square"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
 
-        <!-- Botones Flotantes -->
-        <div class="floating-controls">
-            <button id="scrollToTop" class="btn btn-top shadow-lg" title="Volver al inicio">
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            <a href="https://wa.me/12345678" class="btn btn-whatsapp shadow-lg" target="_blank">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-        </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="/js/portal_nuevo.js"></script>
