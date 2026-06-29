@@ -29,7 +29,7 @@ use App\Http\Livewire\Mikrotik\Herramientas\RouterAuditor;
 
 
 // Route::get('/', Welcome::class)->name('welcome');
-Route::get('/', PortalNuevo::class)->name('portal.nuevo');
+Route::get('/', PortalNuevo::class)->name('portal_nuevo');
 Route::get('/home', [RedirectController::class, 'dashboard'])->middleware('auth');
 Route::get('/listCarrusel', ListCarrusel::class)->name('listCarrusel'); 
 Route::post('/autenticar', [AuthController::class, 'autenticar'])->name('autenticar');
