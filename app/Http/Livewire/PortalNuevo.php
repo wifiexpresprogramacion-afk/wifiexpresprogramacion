@@ -34,7 +34,7 @@ class PortalNuevo extends Component
                 ->get();
         }
 
-        return view('livewire.portal_nuevo', [
+        return view('livewire.portal-nuevo', [
             'banners' => $banners
         ])->layout('layouts.app_guest');
     }
