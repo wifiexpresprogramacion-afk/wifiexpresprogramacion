@@ -381,7 +381,7 @@
                 <i class="bi bi-speedometer2"></i> 
                 <span class="menu-text">RESUMEN MÉTRICAS</span>
             </a>
-
+            <!-- 
             <a href="{{ route('aliado.hour.analysis') }}" class="sidebar-link {{ request()->routeIs('aliado.hour.analysis') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> 
                 <span class="menu-text">Métricas de conexiones</span>
@@ -396,6 +396,8 @@
                 <i class="bi bi-pie-chart-fill"></i> 
                 <span class="menu-text">Métricas de Concursos</span>
             </a>
+
+             -->
             
         @endif
 
