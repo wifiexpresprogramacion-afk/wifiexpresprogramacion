@@ -108,4 +108,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function datosbasicos() { return $this->hasOne(PersonalInformation::class, 'user_id', 'id'); }
     public function comercios() { return $this->hasMany(Comercio::class); }
     public function sales() { return $this->hasMany(Sale::class); }
+
+    /**
+     * Relación con las sucursales/routers a los que está asignado el usuario.
+     */
+    public function sucursales()
+    {
+        return $this->hasMany(UserSucursal::class, 'user_id');
+    }
 }

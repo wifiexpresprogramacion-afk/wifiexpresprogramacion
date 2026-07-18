@@ -36,6 +36,9 @@
                     <tr>
                         <th>Usuario</th>
                         <th>Rol</th>
+                        @if($isAdmin)
+                            <th>Sucursal / Router</th>
+                        @endif
                         <th>Estado</th>
                         <th class="text-center">Acciones</th>
                     </tr>
@@ -62,6 +65,16 @@
                                     {{ strtoupper($user->role) }}
                                 </span>
                             </td>
+                            @if($isAdmin)
+                                <td>
+                                    @if($user->sucursales->isNotEmpty() && $user->sucursales->first()->router)
+                                        <span class="fw-bold d-block">{{ $user->sucursales->first()->router->comercio_nombre }}</span>
+                                        <small class="text-muted">{{ $user->sucursales->first()->router->identity }}</small>
+                                    @else
+                                        <span class="text-muted small">No asignado</span>
+                                    @endif
+                                </td>
+                            @endif
                             <td>
                                 @if($user->active)
                                     <span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 8px;"></i> Activo</span>
@@ -77,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-5 text-muted">No se encontraron usuarios.</td>
+                            <td colspan="{{ $isAdmin ? 5 : 4 }}" class="text-center py-5 text-muted">No se encontraron usuarios.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -111,16 +124,18 @@
                             <input type="text" wire:model.defer="surnames" class="form-control @error('surnames') is-invalid @enderror">
                             @error('surnames') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label fw-bold">Correo Electrónico</label>
                             <input type="email" wire:model.defer="email" class="form-control @error('email') is-invalid @enderror">
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="form-label fw-bold">Rol de Usuario</label>
                             <select wire:model.defer="role" class="form-select @error('role') is-invalid @enderror">
                                 <option value="">Seleccione un rol...</option>
-                                <option value="admin">Administrador</option>
+                                @if($isAdmin)
+                                    <option value="admin">Administrador</option>
+                                @endif
                                 <option value="aliado">Aliado (Gestor de Routers)</option>
                                 <option value="aliadoSmartData">Aliado (SmartData)</option>
                                 <option value="cliente">Cliente</option>
@@ -128,13 +143,23 @@
                             </select>
                             @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Asignar a Sucursal / Router</label>
+                            <select wire:model.defer="router_id" class="form-select @error('router_id') is-invalid @enderror" {{ !$isAdmin && $routers->count() === 1 ? 'disabled' : '' }}>
+                                <option value="">Seleccione un router...</option>
+                                @foreach($routers as $router)
+                                    <option value="{{ $router->id }}">{{ $router->comercio_nombre }} ({{ $router->identity }})</option>
+                                @endforeach
+                            </select>
+                            @error('router_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Contraseña {{ $user_id ? '(Opcional)' : '' }}</label>
                             <input type="password" wire:model.defer="password" class="form-control @error('password') is-invalid @enderror">
                             @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6 d-flex align-items-end">
-                            <div class="form-check form-switch mb-2">
+                            <div class="form-check form-switch mb-2 ms-3">
                                 <input class="form-check-switch" type="checkbox" wire:model.defer="active" id="activeSwitch" style="width: 40px; height: 20px;">
                                 <label class="form-check-label fw-bold ms-2" for="activeSwitch">Usuario Activo</label>
                             </div>
