@@ -22,6 +22,7 @@ class Administrator
             || auth()->user()->isCliente()
             || auth()->user()->isAliado()
             || auth()->user()->isAliadoSmartData()
+            || auth()->user()->isCoordinador()
             || auth()->user()->isDelivery())) 
         {
             return $next($request);

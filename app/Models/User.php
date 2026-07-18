@@ -23,6 +23,7 @@ class User extends Authenticatable implements MustVerifyEmail
     const ROLE_CLIENTE = 'cliente';
     const ROLE_ALIADO = 'aliado';
     const ROLE_ALIADOSMARTDATA = 'aliadoSmartData';
+    const ROLE_COORDINADOR = 'coordinador';
     const ROLE_USER = 'user';
 
     protected $fillable = [
@@ -55,6 +56,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAliadoSmartData() { return $this->role === self::ROLE_ALIADOSMARTDATA; }
     public function isCliente() { return $this->role === self::ROLE_CLIENTE; }
     public function isUser() { return $this->role === self::ROLE_USER; }
+    public function isCoordinador() { return $this->role === self::ROLE_COORDINADOR; }
 
     // --- Propiedades Personalizadas ---
     public function rol() { 

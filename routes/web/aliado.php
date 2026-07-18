@@ -23,6 +23,8 @@ use App\Http\Livewire\Package\PackageManagement;
 use App\Http\Livewire\Mikrotik\Aliado\AntennaMappingManager;
 use App\Http\Livewire\Mikrotik\Data\HourAnalysis;
 
+use App\Http\Livewire\Mikrotik\Aliado\ListAdministradores; // <--- NUEVA IMPORTACIÓN
+
 // Rutas accesibles para ambos roles (Admin y Aliado)
 Route::middleware(['auth'])->group(function () {
     
@@ -48,6 +50,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Gestión de Rangos de Edad
         Route::get('/aliado/age-ranges', ListAgeRanges::class)->name('aliado.age-ranges');
+
+        Route::get('/aliado/administradores', ListAdministradores::class)->name('aliado.administradores');
     });
 
     // Rutas exclusivas del aliado

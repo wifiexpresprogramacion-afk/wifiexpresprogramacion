@@ -382,6 +382,11 @@
                 <span class="menu-text">Monitoreo en Vivo</span>
             </a>
 
+            <a href="{{ route('aliado.administradores') }}" class="sidebar-link {{ request()->routeIs('aliado.administradores') ? 'active' : '' }}">
+                <i class="bi bi-router"></i>
+                <span class="menu-text">Administradores</span>
+            </a>
+
             <!-- 
             <a href="{{ route('mikrotik.data.show-charts') }}" class="sidebar-link {{ request()->routeIs('mikrotik.data.show-charts') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> 
