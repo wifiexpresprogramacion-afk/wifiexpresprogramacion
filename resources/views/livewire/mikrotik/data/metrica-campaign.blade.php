@@ -1,7 +1,12 @@
 <div class="container-fluid py-4">
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4">
-            <h4 class="fw-bold mb-4">Métricas de Campañas</h4>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">Métricas de Campañas</h4>
+                <a href="{{ route('smartdata.promociones') }}" class="btn btn-light rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a Promociones
+                </a>
+            </div>
             <div class="row g-3">
                 @if($isAdmin)
                 <div class="col-md-4">
@@ -102,6 +107,13 @@
                     scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                 }
             });
+        });
+
+        // Para asegurar que el gráfico se renderice al cargar la página si ya hay datos
+        document.addEventListener('livewire:load', function () {
+            @if($stats && $stats['type'] !== 'simple')
+                window.dispatchEvent(new CustomEvent('updateChart', { detail: @json($stats) }));
+            @endif
         });
     </script>
 </div>

@@ -236,7 +236,9 @@ class PromocionesOfertas extends Component
 
     public function render()
     {
-        $query = AdvertisingCampaign::query()->where('user_id', Auth::id());
+        // Añadimos withCount para obtener el número de respuestas de forma eficiente
+        $query = AdvertisingCampaign::withCount('responses')
+            ->where('user_id', Auth::id());
 
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%');

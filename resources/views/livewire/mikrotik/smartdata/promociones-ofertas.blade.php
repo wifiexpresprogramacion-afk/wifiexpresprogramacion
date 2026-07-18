@@ -79,8 +79,9 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('mikrotik.metrica-campana', ['campaign' => $camp->id]) }}" class="btn btn-sm btn-outline-primary border-0 rounded-circle" title="Ver Resultados">
-                                <i class="bi bi-bar-chart-line-fill"></i>
+                            <a href="{{ route('mikrotik.metrica-campana', ['campaign' => $camp->id]) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="Ver Resultados">
+                                <i class="bi bi-bar-chart-line-fill me-1"></i>
+                                <span class="fw-bold">{{ $camp->responses_count }}</span>
                             </a>
                         </td>
                         <td class="text-center">
