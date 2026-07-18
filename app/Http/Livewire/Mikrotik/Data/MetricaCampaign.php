@@ -57,11 +57,13 @@ class MetricaCampaign extends Component
         $data = [
             'total' => $responses->count(),
             'question' => $campaign->question_text,
+            'router_identity' => $campaign->router_identity,
             'type' => $campaign->question_type,
             'labels' => [],
             'values' => [],
+            'text_responses' => [], // Nuevo array para respuestas de texto
         ];
-
+ 
         if ($campaign->question_type !== 'simple' && !empty($campaign->options)) {
             $counts = [];
             foreach ($campaign->options as $option) {
@@ -83,6 +85,9 @@ class MetricaCampaign extends Component
 
             $data['labels'] = array_keys($counts);
             $data['values'] = array_values($counts);
+        } else if ($campaign->question_type === 'simple') {
+            // Si es de respuesta abierta, poblamos el array de respuestas de texto
+            $data['text_responses'] = $responses->where('answer', '!=', '')->pluck('answer')->all();
         }
 
         $this->stats = $data;

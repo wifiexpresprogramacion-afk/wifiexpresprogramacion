@@ -41,14 +41,30 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-header bg-white border-0 pt-4 px-4">
                     <h5 class="fw-bold mb-0">{{ $stats['question'] }}</h5>
-                    <span class="badge bg-light text-dark rounded-pill">{{ $stats['type'] }}</span>
+                    <div class="d-flex gap-2 mt-1">
+                        <span class="badge bg-light text-dark border"><i class="bi bi-router me-1"></i>{{ $stats['router_identity'] }}</span>
+                        <span class="badge bg-light text-dark border">{{ $stats['type'] }}</span>
+                    </div>
                 </div>
                 <div class="card-body p-4">
                     @if($stats['type'] !== 'simple')
                         <canvas id="campaignChart" height="200"></canvas>
                     @else
-                        <div class="alert alert-info border-0 rounded-4">
-                            Esta campaña tiene preguntas abiertas. Las respuestas se visualizan en el listado general.
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-striped">
+                                <thead class="bg-light small text-muted text-uppercase" style="position: sticky; top: 0;">
+                                    <tr>
+                                        <th class="px-3">Respuestas de Texto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($stats['text_responses'] as $response)
+                                    <tr><td class="px-3">{{ $response }}</td></tr>
+                                    @empty
+                                    <tr><td class="px-3 text-muted">No hay respuestas de texto para mostrar.</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     @endif
                 </div>
