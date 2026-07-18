@@ -15,6 +15,8 @@ class CreateUserSucursalsTable extends Migration
     {
         Schema::create('user_sucursals', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id');
+            $table->bigInteger('router_id');
             $table->timestamps();
         });
     }
