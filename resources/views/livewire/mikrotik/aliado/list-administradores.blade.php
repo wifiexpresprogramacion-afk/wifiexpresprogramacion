@@ -136,10 +136,8 @@
                                 @if($isAdmin)
                                     <option value="admin">Administrador</option>
                                 @endif
-                                <option value="aliado">Aliado (Gestor de Routers)</option>
-                                <option value="aliadoSmartData">Aliado (SmartData)</option>
-                                <option value="cliente">Cliente</option>
-                                <option value="vendedor">Vendedor</option>
+                                <option value="administrador">Administrador</option>
+                                
                             </select>
                             @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
