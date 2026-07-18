@@ -372,6 +372,11 @@
                 <span class="menu-text">Promociones y Ofertas</span>
             </a>
 
+            <a href="{{ route('smartdata.concursos') }}" class="sidebar-link {{ request()->routeIs('smartdata.concursos') ? 'active' : '' }}">
+                <i class="bi bi-trophy"></i> 
+                <span class="menu-text">Concursos y Sorteos</span>
+            </a>
+
             <a href="{{ route('smartdata.monitoreo') }}" class="sidebar-link {{ request()->routeIs('smartdata.monitoreo') ? 'active' : '' }}">
                 <i class="bi bi-activity"></i> 
                 <span class="menu-text">Monitoreo en Vivo</span>
