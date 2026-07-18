@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Admin\Users;
+namespace App\Http\Livewire\Mikrotik\Aliado;
 
 use Livewire\Component;
 use App\Models\User;
