@@ -25,9 +25,11 @@ class Monitoreo extends Component
         $todayEnd = Carbon::now()->endOfDay();
 
         // 1. Estadísticas de hoy
-        // Conectados Ahora: Registros en TicketLog que no tienen fecha de desconexión
+        // Conectados Ahora: Registros en TicketLog creados HOY que no tienen fecha de desconexión.
+        // Se filtra por hoy para no contar irregularidades de días anteriores.
         $connectedNow = TicketLog::whereIn('router_id', $allowedRouterIds)
             ->whereNull('disconnected_at')
+            ->where('created_at', '>=', $todayStart)
             ->count();
 
         // Entradas Hoy: Registros de TicketLog creados hoy
