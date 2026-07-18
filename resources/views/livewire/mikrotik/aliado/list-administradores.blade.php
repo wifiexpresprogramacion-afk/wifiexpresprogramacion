@@ -36,9 +36,7 @@
                     <tr>
                         <th>Usuario</th>
                         <th>Rol</th>
-                        @if($isAdmin)
-                            <th>Sucursal / Router</th>
-                        @endif
+                        <th>Sucursal / Router Asignado</th>
                         <th>Estado</th>
                         <th class="text-center">Acciones</th>
                     </tr>
@@ -65,16 +63,14 @@
                                     {{ strtoupper($user->role) }}
                                 </span>
                             </td>
-                            @if($isAdmin)
-                                <td>
-                                    @if($user->sucursales->isNotEmpty() && $user->sucursales->first()->router)
-                                        <span class="fw-bold d-block">{{ $user->sucursales->first()->router->comercio_nombre }}</span>
-                                        <small class="text-muted">{{ $user->sucursales->first()->router->identity }}</small>
-                                    @else
-                                        <span class="text-muted small">No asignado</span>
-                                    @endif
-                                </td>
-                            @endif
+                            <td>
+                                @if($user->sucursales->isNotEmpty() && $user->sucursales->first()->router)
+                                    <span class="fw-bold d-block">{{ $user->sucursales->first()->router->comercio_nombre }}</span>
+                                    <small class="text-muted">{{ $user->sucursales->first()->router->identity }}</small>
+                                @else
+                                    <span class="text-muted small">No asignado</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($user->active)
                                     <span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size: 8px;"></i> Activo</span>
@@ -90,7 +86,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ $isAdmin ? 5 : 4 }}" class="text-center py-5 text-muted">No se encontraron usuarios.</td>
+                            <td colspan="5" class="text-center py-5 text-muted">No se encontraron usuarios.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -135,12 +131,24 @@
                                 <option value="">Seleccione un rol...</option>
                                 @if($isAdmin)
                                     <option value="admin">Administrador</option>
+                                    <option value="aliado">Aliado (Gestor de Routers)</option>
+                                    <option value="aliadoSmartData">Aliado (SmartData)</option>
                                 @endif
-                                <option value="administrador">Administrador</option>
-                                
+                                <option value="administrador">Administrador de Sucursal</option>
                             </select>
                             @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+                        @if($isAdmin)
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Seleccionar Aliado</label>
+                            <select wire:model="aliado_id" class="form-select @error('aliado_id') is-invalid @enderror">
+                                <option value="">Seleccione un aliado para ver sus routers...</option>
+                                @foreach($aliados as $aliado)
+                                    <option value="{{ $aliado->id }}">{{ $aliado->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Asignar a Sucursal / Router</label>
                             <select wire:model.defer="router_id" class="form-select @error('router_id') is-invalid @enderror" {{ !$isAdmin && $routers->count() === 1 ? 'disabled' : '' }}>
@@ -153,8 +161,13 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Contraseña {{ $user_id ? '(Opcional)' : '' }}</label>
-                            <input type="password" wire:model.defer="password" class="form-control @error('password') is-invalid @enderror">
-                            @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            <div class="input-group">
+                                <input type="{{ $showPassword ? 'text' : 'password' }}" wire:model.defer="password" class="form-control @error('password') is-invalid @enderror">
+                                <button class="btn btn-outline-secondary" type="button" wire:click="togglePasswordVisibility">
+                                    <i class="bi {{ $showPassword ? 'bi-eye-slash' : 'bi-eye' }}"></i>
+                                </button>
+                                @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
                         </div>
                         <div class="col-md-6 d-flex align-items-end">
                             <div class="form-check form-switch mb-2 ms-3">

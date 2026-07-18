@@ -19,7 +19,9 @@ class ListAdministradores extends Component
     public $isModalOpen = false;
 
     // Propiedades del formulario
-    public $user_id, $names, $surnames, $email, $role, $password, $active = true, $router_id;
+    public $user_id, $names, $surnames, $email, $role, $password, $active = true, $router_id, $aliado_id;
+    public $showPassword = false;
+    public $aliados = [];
 
     protected $paginationTheme = 'bootstrap';
 
@@ -33,10 +35,10 @@ class ListAdministradores extends Component
         $user = Auth::user();
         $query = User::query();
 
-        if ($user->role === 'admin') {
-            // El admin ve todos los usuarios y la información de su sucursal
-            $query->with(['sucursales.router']);
-        } else {
+        // Siempre cargamos la relación para mostrarla en la tabla
+        $query->with(['sucursales.router']);
+
+        if ($user->role !== 'admin') {
             // El aliado solo ve los usuarios de sus routers
             $aliadoRouterIds = Router::where('user_id', $user->id)->pluck('id');
             $userIdsInSucursales = UserSucursal::whereIn('router_id', $aliadoRouterIds)->pluck('user_id');
@@ -52,17 +54,27 @@ class ListAdministradores extends Component
         $users = $query->latest()->paginate(10);
 
         // Routers para el select del modal
-        $routers = collect();
+        $routersQuery = Router::query();
         if ($user->role === 'admin') {
-            $routers = Router::orderBy('identity')->get();
+            // Si un aliado está seleccionado en el modal, filtramos los routers
+            if ($this->aliado_id) {
+                $routersQuery->where('user_id', $this->aliado_id);
+            } else {
+                // Si no, no mostramos ningún router hasta que se seleccione un aliado
+                $routersQuery->where('id', -1); // Condición que no devuelve nada
+            }
+            $this->aliados = User::whereIn('role', ['aliado', 'aliadoSmartData'])->orderBy('name')->get();
         } else {
-            $routers = Router::where('user_id', $user->id)->orderBy('identity')->get();
+            // El aliado solo ve sus propios routers
+            $routersQuery->where('user_id', $user->id);
         }
+
+        $routers = $routersQuery->orderBy('identity')->get();
 
         return view('livewire.mikrotik.aliado.list-administradores', [
             'users' => $users,
             'routers' => $routers,
-            'isAdmin' => $user->role === 'admin'
+            'isAdmin' => $user->role === 'admin',
         ]);
     }
 
@@ -70,6 +82,7 @@ class ListAdministradores extends Component
     {
         $this->reset(['names', 'surnames', 'email', 'role', 'password', 'user_id', 'router_id']);
         $this->active = true;
+        $this->aliado_id = null;
         $this->openModal();
     }
 
@@ -84,7 +97,13 @@ class ListAdministradores extends Component
 
         // Cargar el router asignado
         $sucursal = UserSucursal::where('user_id', $user->id)->first();
-        $this->router_id = $sucursal ? $sucursal->router_id : null;
+        if ($sucursal && $sucursal->router) {
+            $this->router_id = $sucursal->router_id;
+            // Si somos admin, pre-seleccionamos el aliado dueño del router
+            if (Auth::user()->role === 'admin') {
+                $this->aliado_id = $sucursal->router->user_id;
+            }
+        }
 
         $this->openModal();
     }
@@ -133,4 +152,15 @@ class ListAdministradores extends Component
 
     public function openModal() { $this->isModalOpen = true; }
     public function closeModal() { $this->isModalOpen = false; }
+
+    public function togglePasswordVisibility()
+    {
+        $this->showPassword = !$this->showPassword;
+    }
+
+    public function updatedAliadoId()
+    {
+        // Cuando el admin cambia de aliado, reseteamos el router seleccionado.
+        $this->router_id = null;
+    }
 }
