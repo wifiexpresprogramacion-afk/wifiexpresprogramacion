@@ -57,26 +57,42 @@ class MetricaConcurso extends Component
     public $eventResultGroups = []; // Opciones agrupadas por grupo para la selección
     public $selectedWinners = []; // Ganadores seleccionados por grupo
 
-    public function mount()
+    public function mount(AdvertisingConcurso $concurso = null)
     {
         $this->fromDate = Carbon::now()->startOfMonth()->format('Y-m-d');
         $this->toDate = Carbon::now()->format('Y-m-d');
 
         $user = auth()->user();
+        $isAdmin = in_array($user->role, ['admin', 'root']);
 
-        if ($user->role === 'admin' || $user->role === 'root') {
+        if ($isAdmin) {
             $this->aliados = User::whereIn('role', ['aliado', 'aliadoSmartData'])->get();
-            // Si es admin, inicializamos con el primer aliado si existe
-            if ($this->aliados->isNotEmpty()) {
-                $this->selectedAliado = $this->aliados->first()->id;
-            }
-        } else {
-            // Si no es admin, el aliado es el propio usuario
-            $this->selectedAliado = $user->id;
         }
 
-        $this->loadRouters();
-        $this->loadAgeRanges();
+        if ($concurso) {
+            if ($isAdmin || $concurso->user_id === $user->id) {
+                $this->selectedAliado = $concurso->user_id;
+                $this->loadRouters();
+                
+                $router = Router::where('identity', $concurso->router_identity)->first();
+                if ($router) {
+                    $this->selectedRouter = $router->id;
+                    $this->loadConcursos();
+                }
+
+                $this->selectedConcurso = $concurso->id;
+                $this->consultar();
+            } else {
+                abort(403, 'No tienes permiso para ver este concurso.');
+            }
+        } elseif (!$isAdmin) {
+            $this->selectedAliado = $user->id;
+            $this->loadRouters();
+            $this->loadAgeRanges();
+        } elseif ($this->aliados->isNotEmpty()) {
+            $this->selectedAliado = $this->aliados->first()->id;
+            $this->loadRouters();
+        }
     }
 
     public function updatedSelectedAliado($value)

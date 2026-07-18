@@ -203,6 +203,13 @@
         window.addEventListener('updateConcursoChart', event => {
             initConcursoChart(event.detail.labels, event.detail.values);
         });
+
+        // Para asegurar que el gráfico se renderice al cargar la página si ya hay datos
+        document.addEventListener('livewire:load', function () {
+            @if($stats && !empty($chartData['labels']))
+                window.dispatchEvent(new CustomEvent('updateConcursoChart', { detail: @json($chartData) }));
+            @endif
+        });
     </script>
     @endpush
 </div>

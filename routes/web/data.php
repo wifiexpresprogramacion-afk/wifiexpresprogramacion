@@ -40,7 +40,8 @@ Route::middleware(['auth', 'role:admin,aliado,aliadoSmartData'])->prefix('admin/
     // Se añade {campaign?} para que pueda recibir el ID de la campaña opcionalmente
     Route::get('/metrica-campana/{campaign?}', MetricaCampaign::class)->name('mikrotik.metrica-campana');
 
-    Route::get('/metrica-concurso', MetricaConcurso::class)->name('mikrotik.metrica-concurso');
+    // Se añade {concurso?} para que pueda recibir el ID del concurso opcionalmente
+    Route::get('/metrica-concurso/{concurso?}', MetricaConcurso::class)->name('mikrotik.metrica-concurso');
 
     // Ruta para el listado de nuevos usuarios registrados
     Route::get('/list-users-mikrotik', ListUsersMikrotik::class)->name('mikrotik.data.list-users');
