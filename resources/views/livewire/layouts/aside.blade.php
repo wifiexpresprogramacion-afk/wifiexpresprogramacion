@@ -377,7 +377,7 @@
                 <span class="menu-text">Monitoreo en Vivo</span>
             </a>
 
-            
+            <!-- 
             <a href="{{ route('mikrotik.data.show-charts') }}" class="sidebar-link {{ request()->routeIs('mikrotik.data.show-charts') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> 
                 <span class="menu-text">RESUMEN MÉTRICAS</span>
@@ -398,7 +398,8 @@
                 <span class="menu-text">Métricas de Concursos</span>
             </a>
 
-                        
+             -->
+            
         @endif
 
         @if(auth()->user()->role === 'aliado')

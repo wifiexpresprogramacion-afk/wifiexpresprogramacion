@@ -46,9 +46,10 @@
                 <thead class="bg-light text-muted small fw-bold text-uppercase">
                     <tr>
                         <th class="px-4 py-3">Promoción</th>
+                        <th class="py-3">Router</th>
                         <th class="py-3">Segmentación</th>
-                        <th class="py-3 text-center">Reglas Envío</th>
                         <th class="py-3 text-center">Estado</th>
+                        <th class="py-3 text-center">Resultados</th>
                         <th class="py-3 text-center">Clientes</th>
                         <th class="text-end px-4">Acciones</th>
                     </tr>
@@ -60,13 +61,14 @@
                             <span class="fw-bold d-block text-dark">{{ $camp->name }}</span>
                         </td>
                         <td>
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-router me-1"></i>{{ $camp->router_identity }}
+                            </span>
+                        </td>
+                        <td>
                             <span class="badge bg-soft-info text-info rounded-pill px-3">
                                 {{ strtoupper($camp->target_gender) }} | {{ $camp->ageRange->name ?? 'Cualquier edad' }}
                             </span>
-                        </td>
-                        <td class="text-center">
-                            @php $opts = $camp->options ?? []; @endphp
-                            <i class="bi bi-card-text text-secondary fs-5"></i>
                         </td>
                         <td class="text-center">
                             <div class="form-check form-switch d-inline-block">
@@ -75,6 +77,11 @@
                                     wire:click="toggleStatus({{ $camp->id }})" {{ $camp->active ? 'checked' : '' }}
                                     style="cursor: pointer;">
                             </div>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ route('mikrotik.metrica-campana', ['campaign' => $camp->id]) }}" class="btn btn-sm btn-outline-primary border-0 rounded-circle" title="Ver Resultados">
+                                <i class="bi bi-bar-chart-line-fill"></i>
+                            </a>
                         </td>
                         <td class="text-center">
                             <button wire:click="showUsers({{ $camp->id }})" class="btn btn-sm btn-outline-secondary border-0 rounded-circle" title="Ver Clientes Potenciales">
@@ -95,7 +102,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="6" class="text-center py-5 text-muted">No se encontraron promociones.</td></tr>
+                    <tr><td colspan="7" class="text-center py-5 text-muted">No se encontraron promociones.</td></tr>
                     @endforelse
                 </tbody>
             </table>
