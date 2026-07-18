@@ -15,10 +15,23 @@ class MetricaCampaign extends Component
     public $stats;
     public $isAdmin = false;
 
-    public function mount()
+    public function mount(AdvertisingCampaign $campaign = null)
     {
         $this->isAdmin = Auth::user()->role === 'admin';
-        if (!$this->isAdmin) {
+
+        if ($campaign) {
+            // Si se pasa una campaña por la URL, verificamos el permiso
+            $user = Auth::user();
+            if ($this->isAdmin || $campaign->user_id === $user->id) {
+                $this->aliadoId = $campaign->user_id;
+                $this->campaignId = $campaign->id;
+                // Cargamos los datos de la campaña inmediatamente
+                $this->updatedCampaignId($this->campaignId);
+            } else {
+                // Si no tiene permiso, se aborta la petición.
+                abort(403, 'No tienes permiso para ver esta campaña.');
+            }
+        } elseif (!$this->isAdmin) {
             $this->aliadoId = Auth::id();
         }
     }
