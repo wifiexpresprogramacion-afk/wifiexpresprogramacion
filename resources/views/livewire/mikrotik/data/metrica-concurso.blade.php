@@ -4,7 +4,12 @@
     {{-- FILTROS --}}
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4">
-            <h4 class="fw-bold mb-4"><i class="bi bi-trophy text-primary me-2"></i>Métricas de Concursos</h4>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0"><i class="bi bi-trophy text-primary me-2"></i>Métricas de Concursos</h4>
+                <a href="{{ route('smartdata.concursos') }}" class="btn btn-light rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a Concursos
+                </a>
+            </div>
             <div class="row g-3 align-items-end">
                 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'root')
                 <div class="col-md-3">
