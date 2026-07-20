@@ -19,13 +19,11 @@ class UpdateProfile extends Component
 
     public function mount()
     {
-        // $this->state = auth()->user()->only(['name', 'email']);
-        $this->state = auth()->user()->only(['name', 'identificationNac', 'identificationNumber', 'names', 'surnames', 'email']);
+        $this->state = auth()->user()->only(['name', 'email']);
     }
 
     public function updatedImage()
     {
-        
         $previousPath = auth()->user()->avatar;
 
         $path = $this->image->store('/', 'avatars');
@@ -39,14 +37,9 @@ class UpdateProfile extends Component
 
     public function updateProfile(UpdatesUserProfileInformation $updater)
     {
-        
         $updater->update(auth()->user(), [
             'name' => $this->state['name'],
-            'email' => $this->state['email'],
-            'names' => $this->state['names'],
-            'surnames' => $this->state['surnames'],
-            'identificationNac' => $this->state['identificationNac'],
-            'identificationNumber' => $this->state['identificationNumber'],
+            'email' => $this->state['email']
         ]);
 
         $this->emit('nameChanged', auth()->user()->name);
