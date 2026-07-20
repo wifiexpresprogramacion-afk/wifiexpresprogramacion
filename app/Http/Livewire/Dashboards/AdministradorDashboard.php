@@ -16,7 +16,6 @@ use Carbon\Carbon;
 
 class AdministradorDashboard extends Component
 {
-    public $showPlanModal = false;
     public $periodo = 'semana'; 
     public $fecha_desde, $fecha_hasta;
     public $router_id = ''; 
@@ -37,19 +36,6 @@ class AdministradorDashboard extends Component
                 $this->router_id = $misRouters->first()->id;
             }
         }
-        
-        $this->checkInitialPlan();
-    }
-
-    public function checkInitialPlan()
-    {
-        $user = Auth::user();
-        $hasActive = $user->packages()->wherePivot('status', 'active')->wherePivot('end_date', '>=', now())->exists();
-        $hasPending = $user->packages()->wherePivot('status', 'pending')->exists();
-
-        if (!$hasActive && !$hasPending) {
-            $this->showPlanModal = true;
-        }
     }
 
     public function updatedPeriodo($value)
@@ -64,35 +50,6 @@ class AdministradorDashboard extends Component
         if ($value !== 'personalizado')
         $this->fecha_hasta = now()->format('Y-m-d');
     }
-
-    public function selectPlan($packageId)
-    {
-        $package = Package::findOrFail($packageId);
-        $user = Auth::user();
-        
-        $user->packages()->attach($package->id, [
-            'start_date' => now(),
-            'end_date' => now()->addMonths($package->duration_months),
-            'status' => 'pending',
-            'allowed_routers' => $package->limit_routers,
-            'router_quantity' => 0,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        $this->showPlanModal = false;
-        session()->flash('message', '¡Solicitud enviada! Tu plan se activará pronto.');
-    }
-
-    public function cancelSubscription($packageId)
-    {
-        $user = Auth::user();
-        $user->packages()->wherePivot('status', 'pending')->detach($packageId);
-        session()->flash('message', 'Solicitud cancelada correctamente.');
-    }
-
-    public function openModal() { $this->showPlanModal = true; }
-    public function closeModal() { $this->showPlanModal = false; }
 
     /**
      * Consulta al Bridge para obtener cuántos routers del aliado están realmente online
@@ -182,17 +139,12 @@ class AdministradorDashboard extends Component
 
         $this->dispatchBrowserEvent('updateMultiChart', ['labels' => $labels, 'datasets' => $datasets]);
 
-        $activePlans = $user->packages()->wherePivot('status', 'active')->wherePivot('end_date', '>=', now())->get();
-        $userPackages = $user->packages()->orderBy('package_user.created_at', 'desc')->get();
-
         return view('livewire.dashboards.administrador-dashboard', [
-            'availablePackages' => Package::where('is_active', true)->where('is_visible', true)->get(),
-            'userPackages' => $userPackages,
+            'userPackages' => collect(), // Se envía una colección vacía
             'routers' => $misRouters,
             'stats' => [
                 'total_routers' => $misRouters->count(),
                 'routers_online' => $this->getRoutersOnlineCount($misRouters), // NUEVO: Real de Bridge
-                'limit_routers' => $activePlans->sum('pivot.allowed_routers'),
                 'usuarios_online' => TicketLog::whereIn('router_id', $targetRouterIds)->whereNull('disconnected_at')->where('created_at', '>=', now()->subDay())->count(),
             ],
             'topUsuarios' => (clone $logsQuery)

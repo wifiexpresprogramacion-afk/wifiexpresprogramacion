@@ -61,15 +61,6 @@
                         <h2 class="fw-bold mb-0 text-muted fs-4">Sin Plan</h2>
                     @endforelse
                 </div>
-                @php
-                    $user = auth()->user();
-                    $isAliado = in_array($user->role, ['aliado', 'aliadoSmartData']);
-                @endphp
-                @if (!($isAliado && $userPackages->isNotEmpty()))
-                    <button wire:click="openModal" class="btn btn-sm btn-link text-decoration-none p-0 fw-bold mt-auto" style="font-size: .7rem;">
-                        <i class="bi bi-plus-circle me-1"></i> GESTIONAR
-                    </button>
-                @endif
             </div>
         </div>
         <div class="col-md-4">
@@ -198,38 +189,6 @@
         </div>
     </div>
 
-    {{-- MODAL PLANES --}}
-    @if($showPlanModal)
-    <div class="modal fade show d-block" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 2050;">
-        <div class="modal-dialog modal-xl" style="margin-top: 8rem;">
-            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-dark text-white p-4">
-                    <h5 class="fw-bold mb-0">Suscripciones WiFiExpres</h5>
-                    <button wire:click="closeModal" class="btn-close btn-close-white shadow-none"></button>
-                </div>
-                <div class="modal-body p-4 bg-light">
-                    <div class="row g-4">
-                        @foreach($availablePackages as $package)
-                            <div class="col-md-4">
-                                <div class="card border-0 shadow-sm rounded-4 h-100 text-center">
-                                    <div class="card-body p-4">
-                                        <h4 class="fw-bold">{{ $package->name }}</h4>
-                                        <div class="display-6 fw-bold my-3 text-primary">${{ $package->cost }}</div>
-                                        <ul class="list-unstyled text-start small mb-4">
-                                            <li><i class="bi bi-check2 text-success me-2"></i>{{ $package->limit_routers }} Router(s)</li>
-                                            <li><i class="bi bi-check2 text-success me-2"></i>{{ $package->duration_months }} Mes(es) de servicio</li>
-                                        </ul>
-                                        <button wire:click="selectPlan({{ $package->id }})" class="btn btn-dark w-100 rounded-pill fw-bold">ADQUIRIR</button>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
 </div>
 
 @push('js')
