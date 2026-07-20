@@ -174,8 +174,13 @@
 
             <a href="{{ route('routers.index') }}" class="sidebar-link">
                 <i class="bi bi-router me-2"></i>
-                <span class="menu-text">Listar Routers</span>
+                <span class="menu-text">Routers</span>
                 <span class="badge rounded-pill bg-info text-dark ms-2">{{ $totalRouters ?? '0' }}</span>
+            </a>
+
+            <a href="{{ route('aliado.administradores') }}" class="sidebar-link {{ request()->routeIs('aliado.administradores') ? 'active' : '' }}">
+                <i class="bi bi-router"></i>
+                <span class="menu-text">Administradores</span>
             </a>
 
             <a href="{{ route('habladores.index') }}" class="sidebar-link {{ request()->routeIs('habladores.index') ? 'active' : '' }}">
