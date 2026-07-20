@@ -7,7 +7,6 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border-right: 1px solid #eee;
         overflow-x: hidden;
-        white-space: nowrap;
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -30,6 +29,8 @@
         border-left: 4px solid transparent;
         cursor: pointer;
         text-transform: uppercase;
+        white-space: normal;
+        line-height: 1.2;
     }
 
     .sidebar-link:hover {
@@ -171,6 +172,17 @@
                 <span class="menu-text">Panel Admin</span>
             </a>
 
+            <a href="{{ route('routers.index') }}" class="sidebar-link">
+                <i class="bi bi-router me-2"></i>
+                <span class="menu-text">Routers</span>
+                <span class="badge rounded-pill bg-info text-dark ms-2">{{ $totalRouters ?? '0' }}</span>
+            </a>
+
+            <a href="{{ route('aliado.administradores') }}" class="sidebar-link {{ request()->routeIs('aliado.administradores') ? 'active' : '' }}">
+                <i class="bi bi-router"></i>
+                <span class="menu-text">Administradores</span>
+            </a>
+
             <a href="{{ route('habladores.index') }}" class="sidebar-link {{ request()->routeIs('habladores.index') ? 'active' : '' }}">
                 <i class="bi bi-tv"></i> 
                 <span class="menu-text">Habladores Digitales</span>
@@ -216,26 +228,10 @@
                 @endif
             </a>
 
-            <a href="{{ route('packages.index') }}" class="sidebar-link {{ request()->routeIs('packages.index') ? 'active' : '' }}">
-                <i class="bi bi-box-seam"></i> 
-                <span class="menu-text">Planes Comerciales</span>
-                @php
-                    $totalPackages = \App\Models\Package::count();
-                @endphp
-                <span class="badge rounded-pill bg-primary ms-2">{{ $totalPackages ?? '0' }}</span>
-            </a>
-            
-
             <a href="" class="sidebar-link">
                 <i class="bi bi-calendar-event"></i> 
                 <span class="menu-text">Listar Citas</span>
                 <span class="badge rounded-pill bg-info text-dark ms-2">{{ $totalCitas ?? '0' }}</span>
-            </a>
-
-            <a href="{{ route('routers.index') }}" class="sidebar-link">
-                <i class="bi bi-router me-2"></i>
-                <span class="menu-text">Listar Routers</span>
-                <span class="badge rounded-pill bg-info text-dark ms-2">{{ $totalRouters ?? '0' }}</span>
             </a>
 
             <a href="{{ route('tickets.index') }}" class="sidebar-link">
@@ -293,6 +289,14 @@
                         <i class="bi bi-images"></i> 
                         <span class="menu-text">Carrusel</span>
                     </a>
+                    <a href="{{ route('packages.index') }}" class="sidebar-link {{ request()->routeIs('packages.index') ? 'active' : '' }}">
+                        <i class="bi bi-box-seam"></i> 
+                        <span class="menu-text">Planes Comerciales</span>
+                        @php
+                            $totalPackages = \App\Models\Package::count();
+                        @endphp
+                        <span class="badge rounded-pill bg-primary ms-2">{{ $totalPackages ?? '0' }}</span>
+                    </a>
                     <a href="{{ route('mikrotik.crear-directorios') }}" class="sidebar-link {{ request()->routeIs('mikrotik.crear-directorios') ? 'active' : '' }}">
                         <i class="bi bi-folder-plus"></i>  
                         <span class="menu-text">Gestionar Directorios</span>
@@ -325,6 +329,11 @@
                         <i class="bi bi-gear-wide-connected"></i> 
                         <span class="menu-text">Ajustes Sistema</span>
                     </a>
+                    <a href="{{ route('mikrotik.data.notificaciones') }}" 
+                        class="sidebar-link {{ request()->routeIs('mikrotik.data.notificaciones') ? 'active' : '' }}">
+                            <i class="bi bi-bell-fill"></i> 
+                            <span class="menu-text">NOTIFICACIONES APP</span>
+                    </a>
                 </div>
             </div>
 
@@ -333,12 +342,6 @@
                 <span class="menu-text">Auditoría Bridge</span>
                 <span class="badge rounded-pill bg-dark text-white ms-2">LIVE</span>
             </a>
-
-            <a href="{{ route('mikrotik.data.notificaciones') }}" 
-                class="sidebar-link {{ request()->routeIs('mikrotik.data.notificaciones') ? 'active' : '' }}">
-                    <i class="bi bi-bell-fill"></i> 
-                    <span class="menu-text">NOTIFICACIONES APP</span>
-                </a>
 
             {{-- NUEVO ENLACE: REPORTE GLOBAL DE VENTAS --}}
             <a href="{{ route('mikrotik.router.all-sales') }}" class="sidebar-link {{ request()->routeIs('mikrotik.router.all-sales') ? 'active' : '' }}">
@@ -359,11 +362,42 @@
                 <span class="menu-text">MIS ROUTERS</span>
             </a>
 
+            <a href="{{ route('smartdata.users-visits') }}" class="sidebar-link {{ request()->routeIs('smartdata.users-visits') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i> 
+                <span class="menu-text">Clientes y Visitas</span>
+            </a>
+
+            <a href="{{ route('smartdata.permanencia') }}" class="sidebar-link {{ request()->routeIs('smartdata.permanencia') ? 'active' : '' }}">
+                <i class="bi bi-clock-history"></i> 
+                <span class="menu-text">Reportes de Permanencia</span>
+            </a>
+
+            <a href="{{ route('smartdata.promociones') }}" class="sidebar-link {{ request()->routeIs('smartdata.promociones') ? 'active' : '' }}">
+                <i class="bi bi-megaphone"></i> 
+                <span class="menu-text">Promociones y Ofertas</span>
+            </a>
+
+            <a href="{{ route('smartdata.concursos') }}" class="sidebar-link {{ request()->routeIs('smartdata.concursos') ? 'active' : '' }}">
+                <i class="bi bi-trophy"></i> 
+                <span class="menu-text">Concursos y Sorteos</span>
+            </a>
+
+            <a href="{{ route('smartdata.monitoreo') }}" class="sidebar-link {{ request()->routeIs('smartdata.monitoreo') ? 'active' : '' }}">
+                <i class="bi bi-activity"></i> 
+                <span class="menu-text">Monitoreo en Vivo</span>
+            </a>
+
+            <a href="{{ route('aliado.administradores') }}" class="sidebar-link {{ request()->routeIs('aliado.administradores') ? 'active' : '' }}">
+                <i class="bi bi-router"></i>
+                <span class="menu-text">Administradores</span>
+            </a>
+
+            <!-- 
             <a href="{{ route('mikrotik.data.show-charts') }}" class="sidebar-link {{ request()->routeIs('mikrotik.data.show-charts') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> 
                 <span class="menu-text">RESUMEN MÉTRICAS</span>
             </a>
-
+            
             <a href="{{ route('aliado.hour.analysis') }}" class="sidebar-link {{ request()->routeIs('aliado.hour.analysis') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> 
                 <span class="menu-text">Métricas de conexiones</span>
@@ -378,6 +412,8 @@
                 <i class="bi bi-pie-chart-fill"></i> 
                 <span class="menu-text">Métricas de Concursos</span>
             </a>
+
+             -->
             
         @endif
 
