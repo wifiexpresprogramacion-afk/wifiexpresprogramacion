@@ -64,9 +64,10 @@
                                 </span>
                             </td>
                             <td>
-                                @if($user->sucursales->isNotEmpty() && $user->sucursales->first()->router)
-                                    <span class="fw-bold d-block">{{ $user->sucursales->first()->router->comercio_nombre }}</span>
-                                    <small class="text-muted">{{ $user->sucursales->first()->router->identity }}</small>
+                                @php $router = $user->sucursales->first()->router ?? null; @endphp
+                                @if($router)
+                                    <span class="fw-bold d-block">{{ $router->comercio_nombre }}</span>
+                                    <small class="text-muted">{{ $router->identity }}</small>
                                 @else
                                     <span class="text-muted small">No asignado</span>
                                 @endif
