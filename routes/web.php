@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Livewire\Dashboards\AdminDashboard;
 use App\Http\Livewire\Dashboards\AliadoDashboard;
 use App\Http\Livewire\Dashboards\AliadosmartdataDashboard;
+use App\Http\Livewire\Dashboards\AdministradorDashboard;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Livewire\Error\ShowError;
 use App\Http\Livewire\Welcome;
