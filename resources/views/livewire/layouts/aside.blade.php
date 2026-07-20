@@ -433,54 +433,26 @@
                 <span class="menu-text">Clientes y Visitas</span>
             </a>
 
-            <a href="{{ route('smartdata.permanencia') }}" class="sidebar-link {{ request()->routeIs('smartdata.permanencia') ? 'active' : '' }}">
+            <a href="{{ route('smartdata.permanencia.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.permanencia.admin') ? 'active' : '' }}">
                 <i class="bi bi-clock-history"></i> 
                 <span class="menu-text">Reportes de Permanencia</span>
             </a>
 
-            <a href="{{ route('smartdata.promociones') }}" class="sidebar-link {{ request()->routeIs('smartdata.promociones') ? 'active' : '' }}">
+            <a href="{{ route('smartdata.promociones.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.promociones.admin') ? 'active' : '' }}">
                 <i class="bi bi-megaphone"></i> 
                 <span class="menu-text">Promociones y Ofertas</span>
             </a>
 
-            <a href="{{ route('smartdata.concursos') }}" class="sidebar-link {{ request()->routeIs('smartdata.concursos') ? 'active' : '' }}">
+            <a href="{{ route('smartdata.concursos.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.concursos.admin') ? 'active' : '' }}">
                 <i class="bi bi-trophy"></i> 
                 <span class="menu-text">Concursos y Sorteos</span>
             </a>
 
-            <a href="{{ route('smartdata.monitoreo') }}" class="sidebar-link {{ request()->routeIs('smartdata.monitoreo') ? 'active' : '' }}">
+            <a href="{{ route('smartdata.monitoreo.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.monitoreo.admin') ? 'active' : '' }}">
                 <i class="bi bi-activity"></i> 
                 <span class="menu-text">Monitoreo en Vivo</span>
             </a>
 
-            <a href="{{ route('aliado.administradores') }}" class="sidebar-link {{ request()->routeIs('aliado.administradores') ? 'active' : '' }}">
-                <i class="bi bi-router"></i>
-                <span class="menu-text">Administradores</span>
-            </a>
-
-            <!-- 
-            <a href="{{ route('mikrotik.data.show-charts') }}" class="sidebar-link {{ request()->routeIs('mikrotik.data.show-charts') ? 'active' : '' }}">
-                <i class="bi bi-speedometer2"></i> 
-                <span class="menu-text">RESUMEN MÉTRICAS</span>
-            </a>
-            
-            <a href="{{ route('aliado.hour.analysis') }}" class="sidebar-link {{ request()->routeIs('aliado.hour.analysis') ? 'active' : '' }}">
-                <i class="bi bi-speedometer2"></i> 
-                <span class="menu-text">Métricas de conexiones</span>
-            </a>
-
-            <a href="{{ route('mikrotik.data.list-users') }}" class="sidebar-link {{ request()->routeIs('mikrotik.data.list-users') ? 'active' : '' }}">
-                <i class="bi bi-people"></i> 
-                <span class="menu-text">Métricas de Usuarios</span>
-            </a>
-
-            <a href="{{ route('mikrotik.metrica-concurso') }}" class="sidebar-link {{ request()->routeIs('mikrotik.metrica-concurso') ? 'active' : '' }}">
-                <i class="bi bi-pie-chart-fill"></i> 
-                <span class="menu-text">Métricas de Concursos</span>
-            </a>
-
-             -->
-            
         @endif
 
         @if(auth()->user()->role === 'aliado')
