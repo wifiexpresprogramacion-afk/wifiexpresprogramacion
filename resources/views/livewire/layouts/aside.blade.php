@@ -425,10 +425,10 @@
                 <span class="menu-text">ESCRITORIO</span>
             </a>
 
-            <a href="{{ route('admin.router') }}" class="sidebar-link {{ request()->routeIs('admin.router') ? 'active' : '' }}">
+            <!-- <a href="{{ route('admin.router') }}" class="sidebar-link {{ request()->routeIs('admin.router') ? 'active' : '' }}">
                 <i class="bi bi-router"></i>
                 <span class="menu-text">MI ROUTER</span>
-            </a>
+            </a> -->
 
             <a href="{{ route('smartdata.users-visits.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.users-visits.admin') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> 
