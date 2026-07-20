@@ -417,43 +417,7 @@
             
         @endif
 
-        @if(auth()->user()->role === 'administrador')
-            <a href="{{ route('aliadoSmartData.index') }}" class="sidebar-link {{ request()->routeIs('aliadoSmartData.index') ? 'active' : '' }}">
-                <i class="bi bi-speedometer2"></i> 
-                <span class="menu-text">ESCRITORIO</span>
-            </a>
-
-            <a href="{{ route('aliado.routers') }}" class="sidebar-link {{ request()->routeIs('aliado.routers') ? 'active' : '' }}">
-                <i class="bi bi-router"></i>
-                <span class="menu-text">MI ROUTER</span>
-            </a>
-
-            <a href="{{ route('smartdata.users-visits.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.users-visits.admin') ? 'active' : '' }}">
-                <i class="bi bi-people-fill"></i> 
-                <span class="menu-text">Clientes y Visitas</span>
-            </a>
-
-            <a href="{{ route('smartdata.permanencia.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.permanencia.admin') ? 'active' : '' }}">
-                <i class="bi bi-clock-history"></i> 
-                <span class="menu-text">Reportes de Permanencia</span>
-            </a>
-
-            <a href="{{ route('smartdata.promociones.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.promociones.admin') ? 'active' : '' }}">
-                <i class="bi bi-megaphone"></i> 
-                <span class="menu-text">Promociones y Ofertas</span>
-            </a>
-
-            <a href="{{ route('smartdata.concursos.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.concursos.admin') ? 'active' : '' }}">
-                <i class="bi bi-trophy"></i> 
-                <span class="menu-text">Concursos y Sorteos</span>
-            </a>
-
-            <a href="{{ route('smartdata.monitoreo.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.monitoreo.admin') ? 'active' : '' }}">
-                <i class="bi bi-activity"></i> 
-                <span class="menu-text">Monitoreo en Vivo</span>
-            </a>
-
-        @endif
+     
 
         @if(auth()->user()->role === 'administrador')
             <a href="{{ route('aliadoSmartData.index') }}" class="sidebar-link {{ request()->routeIs('aliadoSmartData.index') ? 'active' : '' }}">
