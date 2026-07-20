@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-4"> 
             <div class="card border-0 shadow-sm rounded-4 p-1 text-center bg-white h-100 d-flex flex-column">
-                <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;">Suscripciones / Planes</h6>
+                <h6 class="text-muted small fw-bold text-uppercase mb-1" style="font-size: .65rem;"></h6>
                 <div class="mb-1" style="max-height: 42px; overflow-y: auto;">
                     @forelse($userPackages as $pkg)
                         <div class="d-flex justify-content-between align-items-center bg-light p-1 px-2 rounded-3 mb-1 border-start border-4 {{ $pkg->pivot->status === 'active' ? 'border-success' : ($pkg->pivot->status === 'pending' ? 'border-warning' : 'border-secondary') }} text-start">
