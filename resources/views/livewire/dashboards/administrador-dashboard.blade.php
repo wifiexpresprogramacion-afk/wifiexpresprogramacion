@@ -58,7 +58,7 @@
                             </div>
                         </div>
                     @empty
-                        <h2 class="fw-bold mb-0 text-muted fs-4">Sin Plan</h2>
+                        {{-- Card vacía para mantener el diseño --}}
                     @endforelse
                 </div>
             </div>
