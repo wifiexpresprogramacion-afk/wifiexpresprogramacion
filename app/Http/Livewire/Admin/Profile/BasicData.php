@@ -14,20 +14,17 @@ class BasicData extends AdminComponent
 
     public $user_id;
 
-        public function mount($user_id)
+    public function mount($user_id)
     {
         $this->user_id = $user_id;
 
         $datosbasicos = DatosBasicos::where('user_id', $user_id)->first();
 
-        if ($datosbasicos) {
-            $this->state =  DatosBasicos::where('user_id', $user_id)->toArray();
-            //$this->state = $datosbasicos->toArray();
-        } else {
-            $this->state = [];
-        }
+        if($datosbasicos)
+        {
+            $this->state = $datosbasicos->toArray();
+        }        
     }
-
 
     public function updateBasicData()
     {
