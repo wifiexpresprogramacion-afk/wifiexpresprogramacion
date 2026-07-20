@@ -62,6 +62,17 @@
                                 </li>
                             @endif
 
+                            @if(auth()->user()->role == 'administrador')
+                                <li>
+                                    <a class="dropdown-item" href="/dashboard-administrador">
+                                        <i class="bi bi-speedometer2 me-2"></i> Escritorio
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.profile.edit') }}" x-ref="profileLink">Perfil</a>
+                                </li>
+                            @endif
+
                             <li><hr class="dropdown-divider"></li>
                             
                             <li>
