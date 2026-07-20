@@ -420,7 +420,7 @@
      
 
         @if(auth()->user()->role === 'administrador')
-            <a href="{{ route('aliadoSmartData.index') }}" class="sidebar-link {{ request()->routeIs('aliadoSmartData.index') ? 'active' : '' }}">
+            <a href="{{ route('administrador.index') }}" class="sidebar-link {{ request()->routeIs('administrador.index') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i> 
                 <span class="menu-text">ESCRITORIO</span>
             </a>
