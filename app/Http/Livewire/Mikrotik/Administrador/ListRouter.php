@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Router;
 use App\Models\User;
 use App\Models\Setting;
+use App\Models\UserSucursal;
 use App\Models\HotspotVersion;
 use App\Models\Package;
 use App\Models\PackageUser;
@@ -35,12 +36,22 @@ class ListRouter extends Component
             ->wherePivot('end_date', '>=', now())
             ->get();
 
-        $routers = Router::query()
-            ->where('user_id', Auth::id())
-            ->with(['user', 'hotspotVersion', 'package'])
-            ->latest()
-            ->get();
+        $query = Router::query();
 
+        if ($userOwner->role === 'administrador') {
+            // Para el administrador, buscamos su router asignado en UserSucursal
+            $sucursal = UserSucursal::where('user_id', $userOwner->id)->first();
+            if ($sucursal) {
+                $query->where('id', $sucursal->router_id);
+            } else {
+                // Si no tiene router asignado, no mostramos ninguno.
+                $query->where('id', -1); 
+            }
+        } else {
+            // Para el aliado, mostramos todos sus routers
+            $query->where('user_id', $userOwner->id);
+        }
+        $routers = $query->with(['user', 'hotspotVersion', 'package'])->latest()->get();
         return view('livewire.mikrotik.administrador.list-router', [
             'routers' => $routers,
             'connectionMode' => $connectionMode,

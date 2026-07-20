@@ -32,10 +32,12 @@
                         <i wire:loading.remove wire:target="refreshStatus" class="bi bi-arrow-clockwise align-middle"></i> 
                         <span class="d-none d-md-inline ms-1">REFRESCAR ESTADOS</span>
                     </button>
-                    @if($routers->count() < $packages->sum('pivot.allowed_routers'))
-                        <button wire:click="create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                            <i class="bi bi-plus-lg me-1"></i> NUEVO ROUTER
-                        </button>
+                    @if(auth()->user()->role !== 'administrador')
+                        @if($routers->count() < $packages->sum('pivot.allowed_routers'))
+                            <button wire:click="create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                                <i class="bi bi-plus-lg me-1"></i> NUEVO ROUTER
+                            </button>
+                        @endif
                     @endif
                 </div>
             </div>
