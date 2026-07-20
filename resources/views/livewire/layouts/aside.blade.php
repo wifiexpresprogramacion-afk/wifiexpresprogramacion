@@ -428,7 +428,7 @@
                 <span class="menu-text">MI ROUTER</span>
             </a>
 
-            <a href="{{ route('smartdata.users-visits') }}" class="sidebar-link {{ request()->routeIs('smartdata.users-visits') ? 'active' : '' }}">
+            <a href="{{ route('smartdata.users-visits.admin') }}" class="sidebar-link {{ request()->routeIs('smartdata.users-visits.admin') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> 
                 <span class="menu-text">Clientes y Visitas</span>
             </a>
