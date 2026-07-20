@@ -15,6 +15,7 @@ class RedirectController extends Controller
             'admin'    => redirect()->route('admin.index'),
             'afiliado' => redirect()->route('afiliado.index'),
             'aliadoSmartData' => redirect()->route('aliadoSmartData.index'),
+            'administrador' => redirect()->route('administrador.index'),
             'cliente' => redirect()->route('cliente.index'),
             default    => redirect()->route('cliente.index'),
         };
