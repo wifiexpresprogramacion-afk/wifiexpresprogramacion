@@ -461,7 +461,7 @@
                 <span class="menu-text">ESCRITORIO</span>
             </a>
 
-            <a href="{{ route('aliado.routers') }}" class="sidebar-link {{ request()->routeIs('aliado.routers') ? 'active' : '' }}">
+            <a href="{{ route('admin.router') }}" class="sidebar-link {{ request()->routeIs('admin.router') ? 'active' : '' }}">
                 <i class="bi bi-router"></i>
                 <span class="menu-text">MI ROUTER</span>
             </a>
