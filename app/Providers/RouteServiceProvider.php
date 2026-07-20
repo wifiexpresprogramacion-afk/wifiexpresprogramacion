@@ -58,6 +58,7 @@ class RouteServiceProvider extends ServiceProvider
                     require base_path('routes/web/aliado.php');
                     require base_path('routes/web/cliente.php');
                     require base_path('routes/web/smartdata.php');
+                    require base_path('routes/web/administrador.php');
                     require base_path('routes/web.php');
                 });
 
