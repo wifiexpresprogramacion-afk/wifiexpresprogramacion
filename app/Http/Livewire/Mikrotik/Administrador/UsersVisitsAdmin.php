@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Mikrotik\Administrador;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\UserMikrotik;
+use App\Models\UserSucursal;
 use App\Models\TicketLog;
 use App\Models\Router;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,12 @@ class UsersVisitsAdmin extends Component
         // Cargar routers solo si el usuario es un aliado
         if (in_array($user->role, ['aliado', 'aliadoSmartData'])) {
             $this->routers = Router::where('user_id', $user->id)->get();
+        } elseif ($user->role === 'administrador') {
+            // Para el administrador, buscamos su router asignado en UserSucursal
+            $sucursal = UserSucursal::where('user_id', $user->id)->first();
+            if ($sucursal) {
+                $this->selectedRouterId = $sucursal->router_id;
+            }
         }
         $this->from = request()->query('from');
     }
@@ -60,6 +67,12 @@ class UsersVisitsAdmin extends Component
 
         if (in_array($authUser->role, ['aliado', 'aliadoSmartData'])) {
             $allowedRouterIds = $this->routers->pluck('id')->toArray();
+        } elseif ($authUser->role === 'administrador') {
+            // El administrador solo puede ver los usuarios de su router asignado
+            $sucursal = UserSucursal::where('user_id', $authUser->id)->first();
+            if ($sucursal) {
+                $allowedRouterIds = [$sucursal->router_id];
+            }
         }
 
         $selectedUser = $this->selectedUserId ? UserMikrotik::find($this->selectedUserId) : null;
