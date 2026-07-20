@@ -26,13 +26,16 @@ class AdministradorDashboard extends Component
         $this->updatedPeriodo($this->periodo);
 
         $user = Auth::user();
+        // Para el rol 'administrador', buscamos sus routers asignados
         if ($user->role === 'administrador') {
-            $sucursal = UserSucursal::where('user_id', $user->id)->first();
-            if ($sucursal) {
-                $this->router_id = $sucursal->router_id;
+            $sucursales = UserSucursal::where('user_id', $user->id)->get();
+            $routerIds = $sucursales->pluck('router_id');
+            $misRouters = Router::whereIn('id', $routerIds)->get();
+
+            // Si solo tiene un router, lo seleccionamos por defecto
+            if ($misRouters->count() === 1) {
+                $this->router_id = $misRouters->first()->id;
             }
-        } else {
-            // Lógica para otros roles si es necesario en el futuro
         }
         
         $this->checkInitialPlan();
@@ -125,16 +128,15 @@ class AdministradorDashboard extends Component
     public function render()
     {
         $user = Auth::user();
-        $misRouters = collect();
+        $misRouters = collect(); // Inicializamos como colección vacía
 
+        // Para el rol 'administrador', obtenemos sus routers desde UserSucursal
         if ($user->role === 'administrador') {
-            $sucursal = UserSucursal::where('user_id', $user->id)->first();
-            if ($sucursal) {
-                $router = Router::find($sucursal->router_id);
-                if ($router) {
-                    $misRouters->push($router);
-                }
-            }
+            $sucursales = UserSucursal::where('user_id', $user->id)->get();
+            $routerIds = $sucursales->pluck('router_id');
+            $misRouters = Router::whereIn('id', $routerIds)->get();
+        } else {
+            // Aquí iría la lógica para otros roles como 'aliadoSmartData' si es necesario
         }
 
         $desde = Carbon::parse($this->fecha_desde)->startOfDay();

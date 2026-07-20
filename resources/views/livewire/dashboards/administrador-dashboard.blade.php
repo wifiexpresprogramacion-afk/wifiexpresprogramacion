@@ -84,7 +84,6 @@
     <div class="card border-0 shadow-sm rounded-4 mb-3">
         <div class="card-body p-1 px-2">
             <div class="row g-2 align-items-end">
-                @if(auth()->user()->role !== 'administrador')
                 <div class="col-md-4">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Equipo / Router</label>
                     <select wire:model="router_id" class="form-select form-select-sm border-0 bg-light rounded-3 shadow-none">
@@ -98,7 +97,6 @@
                         @endforeach
                     </select>
                 </div>
-                @endif
                 <div class="col-md-2">
                     <label class="small fw-bold text-muted mb-1 text-uppercase" style="font-size: .65rem;">Rango</label>
                     <select wire:model="periodo" class="form-select form-select-sm border-0 bg-light rounded-3 shadow-none">
