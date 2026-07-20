@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Mikrotik\Smartdata;
+namespace App\Http\Livewire\Mikrotik\Administrador;
 
 use Livewire\Component;
 use Livewire\WithPagination;
