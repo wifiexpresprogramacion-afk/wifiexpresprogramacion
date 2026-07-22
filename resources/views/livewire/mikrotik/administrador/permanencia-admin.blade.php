@@ -30,7 +30,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label text-xs font-weight-bold">Local / Router</label>
-                            <select class="form-select form-select-sm" wire:model="selectedRouter">
+                            <select class="form-select form-select-sm" wire:model="selectedRouter" @if(auth()->user()->role === 'administrador') disabled @endif>
                                 <option value="">Todos los locales</option>
                                 @foreach($routers as $r)
                                     <option value="{{ $r->id }}">{{ $r->identity }}</option>

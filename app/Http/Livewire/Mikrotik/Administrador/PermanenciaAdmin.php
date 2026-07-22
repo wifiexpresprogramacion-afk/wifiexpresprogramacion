@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Mikrotik\Administrador;
 use Livewire\Component;
 use App\Models\TicketLog;
 use App\Models\Router;
+use App\Models\UserSucursal;
 use App\Models\UserMikrotik;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -53,10 +54,17 @@ class PermanenciaAdmin extends Component
         $start = Carbon::parse($this->fromDate)->startOfDay();
         $end = Carbon::parse($this->toDate)->endOfDay();
         
-        $user = auth()->user();
-        $allowedRouterIds = Router::when($user->role !== 'admin', function($q) use ($user) {
-                return $q->where('user_id', $user->id);
-            })->pluck('id');
+        $user = Auth::user();
+        $allowedRouterIds = [];
+
+        if ($user->role === 'administrador') {
+            $sucursal = UserSucursal::where('user_id', $user->id)->first();
+            if ($sucursal) {
+                $allowedRouterIds = [$sucursal->router_id];
+            }
+        } else {
+            $allowedRouterIds = Router::where('user_id', $user->id)->pluck('id')->toArray();
+        }
 
         $query = TicketLog::whereBetween('created_at', [$start, $end])->whereIn('router_id', $allowedRouterIds);
 
@@ -209,9 +217,16 @@ class PermanenciaAdmin extends Component
 
     public function render()
     {
-        $routers = Router::when(auth()->user()->role !== 'admin', function($q) {
-                return $q->where('user_id', auth()->id());
-            })->get();
+        $user = Auth::user();
+        $routersQuery = Router::query();
+
+        if ($user->role === 'administrador') {
+            $sucursal = UserSucursal::where('user_id', $user->id)->first();
+            $routersQuery->where('id', $sucursal ? $sucursal->router_id : -1);
+        } else {
+            $routersQuery->where('user_id', $user->id);
+        }
+        $routers = $routersQuery->get();
 
         return view('livewire.mikrotik.administrador.permanencia-admin', compact('routers'));
     }

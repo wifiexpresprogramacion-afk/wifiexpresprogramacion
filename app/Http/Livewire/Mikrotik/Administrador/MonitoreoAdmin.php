@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Mikrotik\Administrador;
 use Livewire\Component;
 use App\Models\TicketLog;
 use App\Models\Router;
+use App\Models\UserSucursal;
 use App\Models\UserMikrotik;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -13,13 +14,17 @@ class MonitoreoAdmin extends Component
 {
     public function render()
     {
-        $user = auth()->user();
+        $user = Auth::user();
+        $allowedRouterIds = [];
         
-        // Obtener los IDs de routers permitidos para el usuario actual
-        $allowedRouterIds = Router::where('is_active', true)
-            ->when($user->role !== 'admin', function($q) use ($user) {
-                return $q->where('user_id', $user->id);
-            })->pluck('id');
+        if ($user->role === 'administrador') {
+            $sucursal = UserSucursal::where('user_id', $user->id)->first();
+            if ($sucursal) {
+                $allowedRouterIds = [$sucursal->router_id];
+            }
+        } else {
+            $allowedRouterIds = Router::where('user_id', $user->id)->where('is_active', true)->pluck('id')->toArray();
+        }
 
         $todayStart = Carbon::now()->startOfDay();
         $todayEnd = Carbon::now()->endOfDay();

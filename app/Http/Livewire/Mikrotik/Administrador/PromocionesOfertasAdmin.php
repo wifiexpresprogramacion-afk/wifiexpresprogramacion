@@ -13,6 +13,7 @@ use App\Models\PromocionesUser;
 use App\Models\AgeRange;
 use App\Models\User;
 use Exception;
+use App\Models\UserSucursal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -236,22 +237,30 @@ class PromocionesOfertasAdmin extends Component
 
     public function render()
     {
-        // Añadimos withCount para obtener el número de respuestas de forma eficiente
-        $query = AdvertisingCampaign::withCount('responses')
-            ->where('user_id', Auth::id());
+        $user = Auth::user();
+        $query = AdvertisingCampaign::withCount('responses');
 
+        if ($user->role === 'administrador') {
+            $sucursal = UserSucursal::where('user_id', $user->id)->first();
+            if ($sucursal && $sucursal->router) {
+                $query->where('router_identity', $sucursal->router->identity);
+            } else {
+                $query->whereRaw('1 = 0'); // No mostrar nada si no tiene router asignado
+            }
+        } else {
+            // Lógica para 'aliado' y 'aliadoSmartData'
+            $query->where('user_id', $user->id);
+        }
+
+        // Añadimos withCount para obtener el número de respuestas de forma eficiente
         if ($this->search) {
             $query->where('name', 'like', '%' . $this->search . '%');
         }
 
-        $ageRanges = AgeRange::where('user_id', Auth::id())->get();
+        $ageRanges = AgeRange::where('user_id', $user->id)->get();
 
         // Los routers pueden ser de ambos roles para el aliado
-        $routers = Router::where('user_id', Auth::id())
-            ->whereHas('user', function($q) {
-                $q->whereIn('role', ['aliado', 'aliadoSmartData']);
-            })
-            ->get();
+        $routers = Router::where('user_id', $user->id)->get();
 
         return view('livewire.mikrotik.administrador.promociones-ofertas-admin', [
             'campaigns' => $query->latest()->paginate(10),
