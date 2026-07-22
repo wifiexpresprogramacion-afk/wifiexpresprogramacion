@@ -28,7 +28,7 @@ use App\Http\Livewire\Mikrotik\Aliado\ListAdministradores; // <--- NUEVA IMPORTA
 // Rutas accesibles para ambos roles (Admin y Aliado)
 Route::middleware(['auth'])->group(function () {
     
-    Route::middleware(['role:admin,aliado, aliadoSmartData'])->group(function () {
+    Route::middleware(['role:admin,aliado,aliadoSmartData,administrador'])->group(function () {
         // Gestión de Tickets
         Route::get('/mis-tickets/{id?}', ListTicketsAliado::class)->name('aliado.tickets');
 
@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mis-routers', AliadoRouters::class)->name('aliado.routers');
     });
 
-    Route::middleware(['role:admin,aliado,aliadoSmartData'])->group(function () {
+    Route::middleware(['role:admin,aliado,aliadoSmartData,administrador'])->group(function () {
         Route::get('/planes-comerciales', PackageManagement::class)->name('packages.index');
         Route::get('/configurar-antenas/{router_id}', AntennaMappingManager::class)->name('aliado.antenas.config');
         Route::get('/hour-analysis', HourAnalysis::class)->name('aliado.hour.analysis');
