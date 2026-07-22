@@ -8,6 +8,7 @@ use App\Models\Router;
 use App\Models\UserSucursal;
 use App\Models\UserMikrotik;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class MonitoreoAdmin extends Component
