@@ -420,3 +420,62 @@ Route::middleware('auth:sanctum')->get('/set-smsPromociones', function (Request 
     ]);
 });
 // ** Fin de App para Sms ** //
+
+
+// ** App para notificacion medica ** //
+Route::post('/auth-citamedica', function (Request $request) {
+    // 1. Capturar y limpiar datos
+    $email = trim($request->input('email'));
+    $password = $request->input('password');
+
+    // 2. Buscar usuario
+    $user = User::where('email', $email)->first();
+
+    // 3. Validación de credenciales
+    if ($user && Hash::check($password, $user->password)) {
+        
+        // Verificamos el rol
+        if ($user->role !== 'aliado') {
+            return response()->json(['message' => 'No autorizado: Rol ' . $user->role], 403);
+        }
+
+        try {
+            // Generar Token Sanctum
+            $token = $user->createToken('agenda-token')->plainTextToken;
+
+            // Traemos los routers/consultorios asociados al usuario
+            $routers = Router::where('user_id', $user->id)->get();
+
+            // Citas del mes actual
+            $inicioMes = Carbon::now()->startOfMonth()->toDateString();
+            $finMes = Carbon::now()->endOfMonth()->toDateString();
+
+            $citas = Cita::with(['paciente:id,name,lastname,cellphone'])
+                ->whereBetween('fecha', [$inicioMes, $finMes])
+                ->get();
+
+            // Pacientes registrados para la asignación de citas
+            $pacientes = Paciente::select('id', 'name', 'lastname', 'cellphone')
+                ->get();
+
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email
+                ],
+                'routers' => $routers,
+                'citas' => $citas,
+                'pacientes' => $pacientes,
+                'capacidad_diaria_maxima' => 8 // Límite de citas diarias para alternar color Verde/Rojo
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error en el servidor: ' . $e->getMessage()], 500);
+        }
+    }
+
+    return response()->json(['message' => 'Credenciales incorrectas'], 401);
+});
