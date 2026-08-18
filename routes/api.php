@@ -451,12 +451,12 @@ Route::post('/auth-citamedica', function (Request $request) {
             $inicioMes = Carbon::now()->startOfMonth()->toDateString();
             $finMes = Carbon::now()->endOfMonth()->toDateString();
 
-            $citas = CitaMedica::with(['paciente:id,name,lastname,cellphone'])
+            $citas = CitaMedica::with(['paciente:id,name,lastname,phonecell'])
                 ->whereBetween('fecha', [$inicioMes, $finMes])
                 ->get();
 
             // Pacientes registrados para la asignación de citas
-            $pacientes = Paciente::select('id', 'name', 'lastname', 'cellphone')
+            $pacientes = Paciente::select('id', 'name', 'lastname', 'phonecell')
                 ->get();
 
             return response()->json([
