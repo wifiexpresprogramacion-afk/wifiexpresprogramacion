@@ -443,9 +443,7 @@ Route::post('/auth-citamedica', function (Request $request) {
             // Generar Token Sanctum
             $token = $user->createToken('agenda-token')->plainTextToken;
 
-            // Traemos los routers/consultorios asociados al usuario
-            $routers = Router::where('user_id', $user->id)->get();
-
+            
             // Citas del mes actual
             $inicioMes = Carbon::now()->startOfMonth()->toDateString();
             $finMes = Carbon::now()->endOfMonth()->toDateString();
@@ -466,7 +464,6 @@ Route::post('/auth-citamedica', function (Request $request) {
                     'name' => $user->name,
                     'email' => $user->email
                 ],
-                'routers' => $routers,
                 'citas' => $citas,
                 'pacientes' => $pacientes,
                 'capacidad_diaria_maxima' => 8 // Límite de citas diarias para alternar color Verde/Rojo
