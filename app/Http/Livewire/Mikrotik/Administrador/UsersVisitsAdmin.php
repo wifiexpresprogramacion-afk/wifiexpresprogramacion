@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Http\Livewire\Mikrotik\Administrador;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\UserMikrotik;
+use App\Models\UserSucursal;
+use App\Models\TicketLog;
+use App\Models\Router;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class UsersVisitsAdmin extends Component
+{
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
+    public $search = '';
+    public $selectedUserId = null;
+    public $selectedRouterId = '';
+    public $from = null;
+    public $routers = [];
+
+    public function mount($userId = null)
+    {
+        if ($userId) {
+            $this->selectedUserId = $userId;
+        }
+
+        $user = Auth::user();
+        // Cargar routers solo si el usuario es un aliado
+        if (in_array($user->role, ['aliado', 'aliadoSmartData'])) {
+            $this->routers = Router::where('user_id', $user->id)->get();
+        } elseif ($user->role === 'administrador') {
+            // Para el administrador, buscamos su router asignado en UserSucursal
+            $sucursal = UserSucursal::where('user_id', $user->id)->first();
+            if ($sucursal) {
+                $this->selectedRouterId = $sucursal->router_id;
+            }
+        }
+        $this->from = request()->query('from');
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function selectUser($id)
+    {
+        $this->selectedUserId = $id;
+    }
+
+    public function deselectUser()
+    {
+        if ($this->from === 'permanencia') {
+            return redirect()->route('smartdata.permanencia');
+        }
+        $this->selectedUserId = null;
+    }
+
+    public function render()
+    {
+        $authUser = Auth::user();
+        $allowedRouterIds = [];
+
+        if (in_array($authUser->role, ['aliado', 'aliadoSmartData'])) {
+            $allowedRouterIds = $this->routers->pluck('id')->toArray();
+        } elseif ($authUser->role === 'administrador') {
+            // El administrador solo puede ver los usuarios de su router asignado
+            $sucursal = UserSucursal::where('user_id', $authUser->id)->first();
+            if ($sucursal) {
+                $allowedRouterIds = [$sucursal->router_id];
+            }
+        }
+
+        $selectedUser = $this->selectedUserId ? UserMikrotik::find($this->selectedUserId) : null;
+        
+        $usersQuery = UserMikrotik::query()
+            ->whereIn('router_id', $allowedRouterIds)
+            ->when($this->selectedRouterId, function ($query) {
+                $query->where('router_id', $this->selectedRouterId);
+            })
+            ->where(function($query) {
+                $term = '%' . $this->search . '%';
+                $query->where('full_name', 'like', $term)
+                      ->orWhere('name', 'like', $term)
+                      ->orWhere('server', 'like', $term)
+                      ->orWhere('email', 'like', $term)
+                      ->orWhere(DB::raw("CONCAT(COALESCE(cellphonecode,''), COALESCE(cellphone,''))"), 'like', $term);
+            });
+
+        $users = $usersQuery->latest()->paginate(15);
+
+        // Corregimos la consulta para que coincida con el formato 'T-MAC' de TicketLog
+        $visits = $selectedUser 
+            ? TicketLog::where('username', 'T-' . $selectedUser->name)->orderBy('created_at', 'desc')->get() 
+            : collect();
+            
+        $totalVisits = $visits->count();
+
+        return view('livewire.mikrotik.administrador.users-visits-admin', compact('users', 'selectedUser', 'visits', 'totalVisits', 'authUser'));
+    }
+}

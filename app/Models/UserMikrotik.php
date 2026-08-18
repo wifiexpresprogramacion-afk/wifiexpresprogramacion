@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon; // Importante para manejar fechas
+
+class UserMikrotik extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'router_id',
+        'mikrotik_id',
+        'server',
+        'name', // ejem: 7A:D2:3B:4C:5E
+        'password',
+        'full_name',
+        'gender',    
+        'birthday',  
+        'address',
+        'macaddress',
+        'cellphone',
+        'cellphonecode',
+        'profile',
+        'routes',
+        'email',
+        'limitUptime',
+        'limitBytesIn',
+        'limitBytesOut',
+        'limitBytesTotal',
+        'uptime',
+        'bytesIn',
+        'packetsIn',
+        'bytesOut',
+        'packetsOut',
+        'active',
+    ];
+
+    // Accessor para obtener la edad actual basada en birthday
+    public function getAgeAttribute()
+    {
+        if (!$this->birthday) return null;
+        return Carbon::parse($this->birthday)->age;
+    }
+
+    public function router()
+    {
+        return $this->belongsTo(Router::class, 'router_id');
+    }
+
+    public function visits()
+    {
+        // La relación directa no funciona por el prefijo 'T-', se maneja en el controlador
+        // Si se quisiera usar aquí, sería con un accessor o una relación personalizada.
+        return $this->hasMany(TicketLog::class, 'username', 'name')->whereRaw("username = CONCAT('T-', user_mikrotiks.name)");
+    }
+}

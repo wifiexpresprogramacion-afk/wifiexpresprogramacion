@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">WIFI EXPRES - Acceso</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --orange-accent: #f3ca77;
+            --purple-main: #bd3214;
+        }
+
+        body { 
+            background: url('./fondo.png') no-repeat top center fixed;
+            background-size: 100% auto;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Ajuste responsivo para pantallas más grandes donde el ancho del fondo no llena la pantalla */
+        @media (min-width: 768px) {
+            body {
+                background-size: cover;
+            }
+        }
+
+        /* Loader Overlay de pantalla completa */
+        #loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 3000; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #c33112;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Modal de Publicidad Adaptado */
+        #ads-modal { 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background:rgba(0,0,0,0.85); z-index:2000; 
+            display:none; justify-content:center; align-items:center; 
+        }
+        .ads-content { 
+            width:100%; height:100%; max-width:none; background:black; 
+            border-radius:0; overflow:hidden; position:relative; 
+            box-shadow: none;
+        }
+        
+        .carousel-container { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; }
+        .carousel-slide { display: none; width: 100%; height: 100%; object-fit: cover; animation: fadeEffect 0.8s; }
+        .carousel-slide.active { display: block; }
+        @keyframes fadeEffect { from {opacity: 0.4} to {opacity: 1} }
+
+        #close-ads { 
+            position:absolute; top:12px; right:12px; background: #c33112; 
+            color: white; width: 35px; height: 35px; border-radius: 50%; 
+            display: none; justify-content: center; align-items: center; 
+            cursor: pointer; font-weight: bold; border: 2px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 2001;
+        }
+
+        /* Franja superior arqueada hacia abajo (bordes inferiores redondeados) para el nombre del comercio */
+        .header-comercio {
+            width: 100%;
+            background: linear-gradient(180deg, #91220a 0%, #bd3214 100%);
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            padding: 12px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .header-comercio h1 {
+            color: var(--orange-accent);
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        }
+
+        /* Contenedor invisible superior para empujar la tarjeta hacia abajo emulando el espacio publicitario */
+        .banner-spacing {
+            width: 100%;
+            height: 38vh; 
+            min-height: 220px;
+        }
+
+        /* Tarjeta de registro con los bordes arqueados idénticos a la imagen */
+        .card-registro { 
+            border: none; 
+            border-top-left-radius: 35px; 
+            border-top-right-radius: 35px; 
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15); 
+            background: #ffffff; 
+            padding: 2.5rem 1.75rem;
+        }
+
+        /* Estilos de inputs alineados al diseño limpio */
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 1rem;
+            background-color: #fafafa;
+        }
+
+        .form-control:focus {
+            border-color: #bd3214;
+            box-shadow: 0 0 0 0.2rem rgba(189, 50, 20, 0.25);
+            background-color: #ffffff;
+        }
+
+        .input-label {
+            display: block;
+            color: #c33112;
+            font-weight: 800;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botón Conectar Ahora con el color naranja rojizo de El Fogón */
+        .btn-connect { 
+            border-radius: 50px; 
+            padding: 14px; 
+            font-weight: bold; 
+            background: #c33112; 
+            border: none; 
+            color: #fff; 
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: background 0.2s ease;
+        }
+        .btn-connect:hover, .btn-connect:focus {
+            background: #a6260b;
+            color: #fff;
+            box-shadow: none;
+        }
+
+        /* Enlace inferior */
+        .link-nosotros {
+            color: #000000;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .link-nosotros:hover {
+            color: #c33112;
+        }
+
+        /* Barra inferior */
+        .bottom-bar { 
+            background-color: #c33112; 
+            color: white; 
+            text-align: center; 
+            padding: 18px; 
+            font-weight: bold; 
+            border-top-left-radius: 20px; 
+            border-top-right-radius: 20px; 
+            margin-top: auto; 
+            letter-spacing: 1px;
+        }
+        #form-loader { display: none; }
+
+        /* Estilos para la manito guía */
+        .card-registro {
+            position: relative; /* Asegura que los elementos posicionados absolutamente dentro de la tarjeta se comporten correctamente */
+        }
+
+        .hand-guide-animation {
+            position: absolute;
+            /* Ajusta 'bottom' para posicionar la manito justo encima del botón "CONECTAR AHORA" */
+            /* Considera el padding de la tarjeta y el margen del botón */
+            display: none; /* Oculta por defecto */
+            bottom: 135px; /* Subida para que el dedo toque el botón */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem; /* Tamaño de la manito */
+            color: #c33112; /* Color de la manito, similar al botón */
+            z-index: 10; /* Asegura que esté por encima de otros elementos */
+            animation: bounceHand 1.5s infinite ease-in-out; /* Animación de rebote */
+            pointer-events: none; /* Permite hacer clic a través de la manito */
+        }
+
+        @keyframes bounceHand {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-15px); } /* Sube y baja */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="spinner"></div>
+        <div style="font-weight: bold; color: #c33112;">Procesando, por favor espere...</div>
+    </div>
+
+    <div id="ads-modal">
+        <div class="ads-content">
+            <div id="close-ads" onclick='document.getElementById("ads-modal").style.display="none"'>✕</div>
+            <div class="carousel-container" id="carousel-ads"></div>
+            <div id="timer-text" style="position: absolute; bottom: 30px; left: 0; right: 0; text-align: center; font-size: 14px; color: white; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); z-index: 2002;">
+                Espera <span id="seconds" style="font-weight: bold; color: #f3ca77;">5</span> segundos...
+            </div>
+        </div>
+    </div>
+
+    <header class="header-comercio">
+        <h1 id="header-logo-text">wifiexprés</h1>
+    </header>
+
+    <div class="banner-spacing"></div>
+
+    <div class="container-fluid p-0">
+        <div class="row justify-content-center m-0">
+            <div class="col-md-6 col-lg-5 p-0">
+                <div class="card card-registro">
+                    <h2 class="text-center fw-bold mb-4 text-uppercase tracking-tight" id="comercio_nombre" style="color: #000000; font-size: 1.85rem;">wifiexprés</h2>
+                    
+                    <form id="freeForm" class="px-2">
+                        <div class="mb-3">
+                            <label class="small fw-bold mb-1">Nombre Completo</label>
+                            <input type="text" id="full_name" class="form-control shadow-none" value="José Rosales" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="small fw-bold mb-1">Género</label>
+                                <select id="gender" class="form-select shadow-none">
+                                    <option selected value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                    <option value="O">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="small fw-bold mb-1">Nacimiento</label>
+                                <input type="date" value="1978-07-18" id="birthday" class="form-control shadow-none" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small fw-bold mb-1">Correo Electrónico</label>
+                            <input type="email" id="email" class="form-control shadow-none" value="typej2003@gmail.com" required>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-5 mb-3">
+                                <label class="small fw-bold mb-1">Operadora</label>
+                                <select id="cellphonecode" class="form-select shadow-none" required>
+                                    <option value="0412" selected>0412</option>
+                                    <option value="0414">0414</option>
+                                    <option value="0424">0424</option>
+                                    <option value="0416">0416</option>
+                                    <option value="0426">0426</option>
+                                </select>
+                            </div>
+                            <div class="col-7 mb-3">
+                                <label class="small fw-bold mb-1">Número</label>
+                                <input type="tel" id="cellphone" class="form-control shadow-none" value="1234567" maxlength="7" pattern="[0-9]{7}" required>
+                            </div>
+                        </div>
+
+                        <p class="text-center x-small text-muted mb-3" style="font-size: 0.75rem;">
+                            Al conectar, aceptas nuestros términos y condiciones de uso.
+                        </p>
+
+                        <!-- Guía visual para el botón de conexión -->
+                        <div id="hand-guide" class="hand-guide-animation">
+                            👇
+                        </div>
+
+                        <button type="submit" id="btnSubmit" class="btn btn-primary btn-connect w-100 mt-3 text-uppercase">
+                            CONECTAR AHORA
+                        </button>
+
+                        <div class="text-center mt-4">
+                            <a href="#" class="small link-nosotros">Saber más sobre nosotros</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form name="sendin" action="$(link-login-only)" method="post" style="display:none">
+        <input type="hidden" name="username" />
+        <input type="hidden" name="password" />
+        <input type="hidden" name="dst" value="$(link-orig)" />
+    </form>
+
+    <script>
+        const IDENTITY = "$(identity)";
+        const MAC_CLIENTE = "$(mac)";
+        const API_V1 = "https://wifiexpres.com/api/v1";
+        const API_V2 = "https://wifiexpres.com/api/v2";
+        // Esta es la variable clave de MikroTik para el login Trial
+        const LINK_TRIAL = "$(link-login-only)?dst=$(link-orig-esc)&username=T-$(mac-esc)";
+
+        async function initPortal() {
+            try {
+                const response = await fetch(`${API_V1}/get-plans?identity=${encodeURIComponent(IDENTITY)}&mac=${encodeURIComponent(MAC_CLIENTE)}&t=${Date.now()}`);
+                const data = await response.json();
+                if (data.success && data.router) {
+                    const r = data.router;
+                    document.getElementById('page-title').innerText = r.comercio_nombre || "WifiExprés";
+                    document.getElementById('comercio_nombre').innerText = r.comercio_nombre || "BIENVENIDO";
+                    
+                    // También actualizamos dinámicamente la tarjeta arqueada superior del header
+                    const headerNombre = document.getElementById('header-logo-text');
+                    if(headerNombre) {
+                        headerNombre.innerText = (r.comercio_nombre || "wifiexprés").toUpperCase();
+                    }
+
+                    if (r.comercio_banner) {
+                        document.body.style.backgroundImage = `url('${r.comercio_banner}')`;
+                    }
+
+                    if(r.is_promotion == 1 && r.path_imgs) { 
+                        renderCarousel(r.path_imgs); 
+                    }
+                }
+            } catch (err) {
+                console.error("Error al cargar datos del router:", err);
+            }
+        }
+
+        function renderCarousel(imgs) {
+            const container = document.getElementById("carousel-ads");
+            container.innerHTML = "";
+            imgs.forEach((src, i) => {
+                const img = document.createElement("img"); 
+                img.src = src;
+                img.className = i === 0 ? "carousel-slide active" : "carousel-slide";
+                container.appendChild(img);
+            });
+            
+            document.getElementById("ads-modal").style.display = "flex";
+            let t = 5;
+            const timer = setInterval(() => {
+                t--; 
+                document.getElementById("seconds").innerText = t;
+                if(t <= 0) { 
+                    clearInterval(timer); 
+                    document.getElementById("close-ads").style.display = "flex"; 
+                }
+            }, 1000);
+
+            if(imgs.length > 1){
+                let currentSlide = 0;
+                setInterval(() => {
+                    const slides = document.querySelectorAll(".carousel-slide");
+                    if(slides.length > 0) {
+                        slides[currentSlide].classList.remove("active");
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        slides[currentSlide].classList.add("active");
+                    }
+                }, 3000);
+            }
+        }
+
+        initPortal();
+
+        const freeForm = document.getElementById('freeForm');
+        const handGuide = document.getElementById('hand-guide');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        // Función para validar si el formulario está completo y mostrar/ocultar la manito
+        function validateForm() {
+            if (freeForm.checkValidity()) {
+                handGuide.style.display = 'block';
+            } else {
+                handGuide.style.display = 'none';
+            }
+        }
+
+        // Escuchar cambios en los inputs para actualizar la visibilidad de la manito
+        freeForm.addEventListener('input', validateForm);
+
+        freeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btnSubmit.disabled = true;
+            document.getElementById("loader-overlay").style.display = "flex";
+
+            const payload = {
+                identity: IDENTITY,
+                mac_cliente: MAC_CLIENTE,
+                full_name: document.getElementById('full_name').value,
+                gender: document.getElementById('gender').value,
+                birthday: document.getElementById('birthday').value,
+                email: document.getElementById('email').value,
+                cellphonecode: document.getElementById('cellphonecode').value,
+                cellphone: document.getElementById('cellphone').value
+            };
+
+            try {
+                const response = await fetch(`${API_V2}/free-connection`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = LINK_TRIAL;
+                } else {
+                    alert("Error: " + result.message);
+                    document.getElementById("loader-overlay").style.display = "none";
+                    document.getElementById('btnSubmit').disabled = false;
+                }
+            } catch (error) {
+                alert("No se pudo conectar con el servidor central.");
+                document.getElementById("loader-overlay").style.display = "none";
+                document.getElementById('btnSubmit').disabled = false;
+            }
+        });
+
+        // Ejecutar validación inicial por si hay campos pre-rellenados
+        validateForm();
+    </script>
+</body>
+</html>
