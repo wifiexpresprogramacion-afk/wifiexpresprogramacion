@@ -15,6 +15,11 @@ class CreateCitaMedicasTable extends Migration
     {
         Schema::create('cita_medicas', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('paciente_id');
+            $table->bigInteger('consultorio_id');
+            $table->bigInteger('doctor_id');
+            $table->date('fecha');
+            $table->datetime('hora');
             $table->timestamps();
         });
     }
