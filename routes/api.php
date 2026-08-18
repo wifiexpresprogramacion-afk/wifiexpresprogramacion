@@ -437,7 +437,7 @@ Route::post('/auth-citamedica', function (Request $request) {
     if ($user && Hash::check($password, $user->password)) {
         
         // Verificamos el rol
-        if ($user->role !== 'aliado' || $user->role !== 'aliadoSmartData') {
+        if ($user->role !== 'aliado' && $user->role !== 'aliadoSmartData') {
             return response()->json(['message' => 'No autorizado: Rol ' . $user->role], 403);
         }
 
