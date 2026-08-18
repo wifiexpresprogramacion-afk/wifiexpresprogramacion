@@ -27,6 +27,7 @@ use App\Models\Pagomovil;
 use App\Models\Router;
 use App\Models\Hablador;
 use App\Models\Pantalla;
+use Illuminate\Support\Carbon;
 use App\Models\Paciente;
 use App\Models\CitaMedica;
 
