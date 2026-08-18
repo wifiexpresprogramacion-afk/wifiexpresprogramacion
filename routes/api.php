@@ -27,6 +27,8 @@ use App\Models\Pagomovil;
 use App\Models\Router;
 use App\Models\Hablador;
 use App\Models\Pantalla;
+use App\Models\Paciente;
+use App\Models\CitaMedica;
 
 use App\Http\Controllers\Api\SyPagoController;
 
@@ -448,7 +450,7 @@ Route::post('/auth-citamedica', function (Request $request) {
             $inicioMes = Carbon::now()->startOfMonth()->toDateString();
             $finMes = Carbon::now()->endOfMonth()->toDateString();
 
-            $citas = Cita::with(['paciente:id,name,lastname,cellphone'])
+            $citas = CitaMedica::with(['paciente:id,name,lastname,cellphone'])
                 ->whereBetween('fecha', [$inicioMes, $finMes])
                 ->get();
 
